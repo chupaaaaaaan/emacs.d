@@ -1,0 +1,24 @@
+# backup files
+**/*~
+**/#*
+
+# emacs 
+.cache/
+.dap-breakpoints
+kkcrc
+.lsp-session*
+projects
+amx-items
+customize.el
+history
+places
+projectile-bookmarks.eld
+recentf
+tramp
+transient/
+bookmarks
+projectile.cache
+eclipse.jdt.ls/
+workspace/
+eln-cache/
+tree-sitter/
