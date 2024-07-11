@@ -16,6 +16,7 @@
   (defconst chpn/dir-jars "~/.jar/")
   (unless (file-directory-p chpn/dir-jars)
     (make-directory chpn/dir-jars t))
+  (defun chpn/from-dir-jars (jar-file) (expand-file-name jar-file chpn/dir-jars))
 
   (defconst chpn/dir-pkg-elpa "~/.elisp/elpa/")
   (defconst chpn/dir-pkg-elget "~/.elisp/el-get/")
@@ -861,7 +862,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                         ("sqlite" . sql)))
 
   ;; plantuml
-  (org-plantuml-jar-path (expand-file-name "plantuml.jar" chpn/dir-jars))
+  (org-plantuml-jar-path (chpn/from-dir-jars "plantuml.jar"))
   (org-babel-load-languages '((plantuml . t)))
 
   :bind
@@ -1348,8 +1349,8 @@ INFO is a plist used as a communication channel."
                        "-XX:GCTimeRatio=4"
                        "-XX:AdaptiveSizePolicyWeight=90"
                        "-Dsun.zip.disableMemoryMapping=true"
-                       ,(concat "-javaagent:" (expand-file-name "lombok.jar" chpn/dir-jars))
-                       ,(concat "-Xbootclasspath/a:" (expand-file-name "lombok.jar" chpn/dir-jars))
+                       ,(concat "-javaagent:" (chpn/from-dir-jars "lombok.jar"))
+                       ,(concat "-Xbootclasspath/a:" (chpn/from-dir-jars "lombok.jar"))
                        ;; "-noverify"
                        ;; "-XX:+UseG1GC"
                        ;; "-XX:+UseStringDeduplication"
@@ -1459,7 +1460,7 @@ INFO is a plist used as a communication channel."
 (leaf plantuml-mode :ensure t
   :mode ("\\.puml\\'")
   :custom
-  `(plantuml-jar-path . ,(expand-file-name "plantuml.jar" chpn/dir-jars))
+  `(plantuml-jar-path . ,(chpn/from-dir-jars "plantuml.jar"))
   (plantuml-default-exec-mode . 'jar)
   (plantuml-output-type . "png"))
 
