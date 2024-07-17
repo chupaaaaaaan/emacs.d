@@ -39,10 +39,6 @@
 
   (package-initialize)
 
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-
   (unless (package-installed-p 'leaf)
     (package-refresh-contents)
     (package-install 'leaf))
@@ -737,133 +733,150 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package org
-  :ensure t
-  :defer t
+(defconst org-dir "~/org/")
+(defconst memo-dir (concat org-dir "memo/"))
+(defconst issue-dir (concat org-dir "issue/"))
+(defconst diary-dir (concat org-dir "diary/"))
+(defconst agenda-dir (concat org-dir "agenda/"))
+(defconst note-file (concat org-dir "notes.org"))
+(defconst inbox-file (concat agenda-dir "inbox.org"))
+(defconst plantuml-jar (chpn/from-dir-jars "plantuml.jar"))
+(defconst archive-pattern (concat org-dir "agenda/archive/archive_%s::"))
+(leaf org :ensure t
+  :defvar (org-mode-line-string
+           org-default-notes-file
+           org-clock-effort)
+  :defun (org-clock-get-clocked-time
+          org-clock-out
+          org-duration-to-minutes
+          org-read-date
+          ladicle/task-clocked-time
+          chpn/insert-today-string
+          chpn/insert-timestamp-string
+          ladicle/get-today-diary
+          ladicle/get-yesterday-diary
+          ladicle/get-diary-from-cal
+          )
   :custom
   ;; files and directories
-  (org-directory "~/org/")
-  (org-default-notes-file (concat org-directory "notes.org"))
-  (org-agenda-files `(,(concat org-directory agenda-dir) ,org-default-notes-file))
+  (org-default-notes-file . note-file)
+  (org-agenda-files . `(,agenda-dir ,note-file))
 
   ;; view style
-  (org-startup-indented t)
-  (org-indent-indentation-per-level 2)
-  (org-startup-with-inline-images t)
-  (org-startup-folded 'content)
+  (org-startup-indented . t)
+  (org-indent-indentation-per-level . 2)
+  (org-startup-with-inline-images . t)
+  (org-startup-folded . 'content)
 
   ;; agenda
-  (org-agenda-span 'day)
-  (org-agenda-include-diary nil)
-  (org-agenda-dim-blocked-tasks t)
-  (org-agenda-window-setup 'current-window)
-  (org-agenda-log-mode-items '(clock))
-  (org-agenda-tags-todo-honor-ignore-options t)
-  (org-agenda-clockreport-parameter-plist '(:maxlevel 5 :fileskip0 t :link t))
-  (org-agenda-start-on-weekday 2)
-  (org-agenda-custom-commands
-   `(("i" "Agenda: 予定表"
-      ((agenda "" ((org-agenda-span 'day)))
-       (tags-todo "-INBOX+HABIT" ((org-agenda-overriding-header "Habit")
-                                  (org-agenda-sorting-strategy '(category-keep)))) nil))
-
-     ("p" "Tasks: タスク"
-      ((agenda "" ((org-agenda-span 'week)))
-       (tags-todo "+INBOX"
-                  ((org-agenda-overriding-header "Inbox")
-                   ;; (org-agenda-todo-ignore-scheduled nil)
-                   (org-tags-match-list-sublevels nil)))
-       (tags-todo "-INBOX-HABIT/-REFR-SOME-DONE-CANCELED"
-                  ((org-agenda-overriding-header "Tasks")
-                   (org-tags-match-list-sublevels 'indented)
-                   (org-agenda-todo-ignore-scheduled 'all)
-                   (org-agenda-sorting-strategy '(priority-down scheduled-up)))) nil))))
+  (org-agenda-span . 'day)
+  (org-agenda-include-diary . nil)
+  (org-agenda-dim-blocked-tasks . t)
+  (org-agenda-window-setup . 'current-window)
+  (org-agenda-log-mode-items . '(clock))
+  (org-agenda-tags-todo-honor-ignore-options . t)
+  (org-agenda-clockreport-parameter-plist . '(:maxlevel 5 :fileskip0 t :link t))
+  (org-agenda-start-on-weekday . 2)
+  (org-agenda-custom-commands . `(("i" "Agenda: 予定表"
+                                   ((agenda "" ((org-agenda-span 'day)))
+                                    (tags-todo "-INBOX+HABIT" ((org-agenda-overriding-header "Habit")
+                                                               (org-agenda-sorting-strategy '(category-keep)))) nil))
+                                  ("p" "Tasks: タスク"
+                                   ((agenda "" ((org-agenda-span 'week)))
+                                    (tags-todo "+INBOX"
+                                               ((org-agenda-overriding-header "Inbox")
+                                                ;; (org-agenda-todo-ignore-scheduled nil)
+                                                (org-tags-match-list-sublevels nil)))
+                                    (tags-todo "-INBOX-HABIT/-REFR-SOME-DONE-CANCELED"
+                                               ((org-agenda-overriding-header "Tasks")
+                                                (org-tags-match-list-sublevels 'indented)
+                                                (org-agenda-todo-ignore-scheduled 'all)
+                                                (org-agenda-sorting-strategy '(priority-down scheduled-up)))) nil))))
 
   ;; refile
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-targets '((org-agenda-files . (:todo . "TODO"))
-                        (org-agenda-files . (:todo . "NEXT"))
-                        (org-agenda-files . (:todo . "WAIT"))
-                        (org-agenda-files . (:todo . "REFR"))
-                        (org-agenda-files . (:todo . "SOME"))))
+  (org-refile-use-outline-path . 'file)
+  (org-outline-path-complete-in-steps . nil)
+  (org-refile-targets . '((org-agenda-files . (:todo . "TODO"))
+                          (org-agenda-files . (:todo . "NEXT"))
+                          (org-agenda-files . (:todo . "WAIT"))
+                          (org-agenda-files . (:todo . "REFR"))
+                          (org-agenda-files . (:todo . "SOME"))))
 
   ;; log
-  (org-log-done 'time)
-  (org-log-done-with-time t)
-  (org-log-into-drawer t)
-  (org-log-redeadline 'time)
-  (org-log-reschedule 'time)
+  (org-log-done . 'time)
+  (org-log-done-with-time . t)
+  (org-log-into-drawer . t)
+  (org-log-redeadline . 'time)
+  (org-log-reschedule . 'time)
   
   ;; clock/timer
-  (org-clock-out-remove-zero-time-clocks t)
-  (org-clock-clocktable-default-properties '(:maxlevel 2 :scope agenda :wstart 2 :fileskip0 t :link t :tags nil :block thismonth))
-  (org-clock-clocked-in-display 'mode-line) ;; 'frame-title
-  (org-timer-default-timer 30)
+  (org-clock-out-remove-zero-time-clocks . t)
+  (org-clock-clocktable-default-properties . '(:maxlevel 2 :scope agenda :wstart 2 :fileskip0 t :link t :tags nil :block thismonth))
+  (org-clock-clocked-in-display . 'mode-line) ;; 'frame-title
+  (org-timer-default-timer . 30)
 
   ;; todo
-  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w@)" "REFR(r)" "SOME(s)" "|" "DONE(d)" "CANCELED(c@)")))
-  (org-enforce-todo-dependencies t)
-  (org-enforce-todo-checkbox-dependencies t)
-  (org-track-ordered-property-with-tag t)
-  (org-priority-highest 1)
-  (org-priority-lowest 9)
-  (org-priority-default 5)
-  (org-priority-start-cycle-with-default nil)
+  (org-todo-keywords . '((sequence "TODO(t)" "WAIT(w@)" "REFR(r)" "SOME(s)" "|" "DONE(d)" "CANCELED(c@)")))
+  (org-enforce-todo-dependencies . t)
+  (org-enforce-todo-checkbox-dependencies . t)
+  (org-track-ordered-property-with-tag . t)
+  (org-priority-highest . 1)
+  (org-priority-lowest . 9)
+  (org-priority-default . 5)
+  (org-priority-start-cycle-with-default . nil)
 
   ;; capture
-  (org-capture-templates
-   `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
-      "* %?\n"
-      :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
-     ("i" "inbox: 新規タスク" entry (file ,(concat org-directory agenda-dir "inbox.org"))
-      "* TODO [/] %?\n:PROPERTIES:\n:COOKIE_DATA: checkbox\n:END:\n%U"
-      :empty-lines 1 :jump-to-captured nil)
-     ("s" "schedule: スケジュール" entry (file ,(concat org-directory agenda-dir "inbox.org"))
-      "* TODO %?\nSCHEDULED: <%(org-read-date t)>\n%U"
-      :empty-lines 1)
-     ("m" "memo: 新規文書" plain (file chpn/today-memo-string-with-mkdir)
-      "#+TITLE: %?\n#+DATE: %(chpn/insert-today-string)\n#+OPTIONS: ^:{}\n#+OPTIONS: \\n:t\n#+OPTIONS: toc:nil\n#+OPTIONS: H:3\n\n"
-      :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
-     ("l" "link: リンクを追加" item (clock)
-      "%A\n"
-      :immediate-finish 1 :prepend nil)))
+  (org-capture-templates . `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
+                              "* %?\n"
+                              :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
+                             ("i" "inbox: 新規タスク" entry (file ,inbox-file)
+                              "* TODO [/] %?\n:PROPERTIES:\n:COOKIE_DATA: checkbox\n:END:\n%U"
+                              :empty-lines 1 :jump-to-captured nil)
+                             ("s" "schedule: スケジュール" entry (file ,inbox-file)
+                              "* TODO %?\nSCHEDULED: <%(org-read-date t)>\n%U"
+                              :empty-lines 1)
+                             ("m" "memo: 新規文書" plain (file chpn/today-memo-string-with-mkdir)
+                              "#+TITLE: %?\n#+DATE: %(chpn/insert-today-string)\n#+OPTIONS: ^:{}\n#+OPTIONS: \\n:t\n#+OPTIONS: toc:nil\n#+OPTIONS: H:3\n\n"
+                              :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
+                             ("l" "link: リンクを追加" item (clock)
+                              "%A\n"
+                              :immediate-finish 1 :prepend nil)))
 
   ;; tags
-  (org-tag-alist '((:startgroup . nil) ("requirement" . ?r) ("design" . ?d) ("implement" . ?i) ("test" . ?t) (:endgroup . nil)
-                   (:startgroup . nil) ("comment" . ?c) (:endgroup . nil)))
+  (org-tag-alist . '((:startgroup . nil) ("requirement" . ?r) ("design" . ?d) ("implement" . ?i) ("test" . ?t) (:endgroup . nil)
+                     (:startgroup . nil) ("comment" . ?c) (:endgroup . nil)))
 
   ;; property
-  (org-global-properties '(("Effort_ALL" . "0:05 0:15 0:30 1:00 1:30 2:00 2:30 3:00 4:00")))
+  (org-global-properties . '(("Effort_ALL" . "0:05 0:15 0:30 1:00 1:30 2:00 2:30 3:00 4:00")))
 
   ;; columns
-  ;; (org-columns-default-format "%40ITEM %TAGS %TODO %BLOCKED %PRIORITY %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
-  (org-columns-default-format "%40ITEM %TODO %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
+  ;; (org-columns-default-format . "%40ITEM %TAGS %TODO %BLOCKED %PRIORITY %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
+  (org-columns-default-format . "%40ITEM %TODO %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
 
-  ;; archive
-  (org-archive-location (concat org-directory "agenda/archive/archive_%s::"))
+  ;; ;; archive
+  (org-archive-location . archive-pattern)
 
   ;; source code
-  (org-src-tab-acts-natively t)
-  (org-src-lang-modes '(("C" . c)
-                        ("C++" . c++)
-                        ("asymptote" . asy)
-                        ("bash" . sh)
-                        ("beamer" . latex)
-                        ("calc" . fundamental)
-                        ("cpp" . c++)
-                        ("ditaa" . artist)
-                        ("dot" . fundamental)
-                        ("elisp" . emacs-lisp)
-                        ("ocaml" . tuareg)
-                        ("plantuml" . plantuml)
-                        ("screen" . shell-script)
-                        ("shell" . sh)
-                        ("sqlite" . sql)))
+  (org-src-tab-acts-natively . t)
+  (org-src-lang-modes . '(("C" . c)
+                          ("C++" . c++)
+                          ("asymptote" . asy)
+                          ("bash" . sh)
+                          ("beamer" . latex)
+                          ("calc" . fundamental)
+                          ("cpp" . c++)
+                          ("ditaa" . artist)
+                          ("dot" . fundamental)
+                          ("elisp" . emacs-lisp)
+                          ("ocaml" . tuareg)
+                          ("plantuml" . plantuml)
+                          ("screen" . shell-script)
+                          ("shell" . sh)
+                          ("sqlite" . sql)))
 
   ;; plantuml
-  (org-plantuml-jar-path (chpn/from-dir-jars "plantuml.jar"))
-  (org-babel-load-languages '((plantuml . t)))
+  (org-plantuml-jar-path . plantuml-jar)
+  (org-babel-load-languages . '((plantuml . t)))
 
   :bind
   ("C-c c" . org-capture)
@@ -871,74 +884,66 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("C-c l" . org-store-link)
   ("C-+"   . (lambda () (interactive) (insert (chpn/insert-today-string))))
   ("C-*"   . (lambda () (interactive) (insert (chpn/insert-timestamp-string))))
-  (:map chpn-org-map
-        ("i" . agenda-inbox)
-        ("p" . agenda-task)
-        ("t" . diary-today)
-        ("y" . diary-yesterday)
-        ("c" . diary-from-cal)
-        ("m" . open-memo))
-  (:map org-mode-map
-        ;; ("C-c i" . org-clock-in)
-        ;; ("C-c o" . org-clock-out)
-        ;; ("C-c u" . org-dblock-update)
-        ("C-c r"   . org-clock-report)
-        ("C-c t c" . org-table-create)
-        ("C-c t -" . org-table-insert-row)
-        ("C-c t |" . org-table-insert-column)
-        ("C-c t =" . org-table-insert-hline)
-        ("C-c n" . org-narrow-to-subtree)
-        ("C-c b" . org-narrow-to-block)
-        ("C-c w" . widen)
-        ("C-c e" . org-set-effort))
+  (chpn-org-map
+   ("i" . (lambda () (interactive) (org-agenda nil "i")))
+   ("p" . (lambda () (interactive) (org-agenda nil "p")))
+   ("t" . (lambda () (interactive) (chpn/open-file (ladicle/get-today-diary))))
+   ("y" . (lambda () (interactive) (chpn/open-file (ladicle/get-yesterday-diary))))
+   ("c" . (lambda () (interactive) (chpn/open-file (ladicle/get-diary-from-cal))))
+   ("m" . (lambda () (interactive) (chpn/open-file (consult-find memo-dir "..#")))))
+  (org-mode-map
+   ;; ("C-c i" . org-clock-in)
+   ;; ("C-c o" . org-clock-out)
+   ;; ("C-c u" . org-dblock-update)
+   ("C-c r"   . org-clock-report)
+   ("C-c t c" . org-table-create)
+   ("C-c t -" . org-table-insert-row)
+   ("C-c t |" . org-table-insert-column)
+   ("C-c t =" . org-table-insert-hline)
+   ("C-c n" . org-narrow-to-subtree)
+   ("C-c b" . org-narrow-to-block)
+   ("C-c w" . widen)
+   ("C-c e" . org-set-effort))
+  (org-agenda-mode-map
+   :package org-agenda
+   ("C" . org-agenda-columns)
+   ("w" . org-agenda-refile)
+   ("d" . org-agenda-set-property)
+   ("W" . org-agenda-week-view)
+   ("D" . org-agenda-day-view))
 
   :hook
-  (emacs-startup . (lambda () (org-agenda nil "i")))
-  (kill-emacs . ladicle/org-clock-out-and-save-when-exit)
-  (org-clock-in . (lambda ()
-                    (setq org-mode-line-string (ladicle/task-clocked-time))
-                    (run-at-time 0 60 '(lambda ()
-                                         (setq org-mode-line-string (ladicle/task-clocked-time))
-                                         (force-mode-line-update)))
-                    (force-mode-line-update)))
-  (org-mode . (lambda ()
-                (dolist (key '("C-'" "C-," "C-."))
-                  (unbind-key key org-mode-map))))
-  (auto-save . org-save-all-org-buffers)
+  (emacs-startup-hook . (lambda () (org-agenda nil "i")))
+  (kill-emacs-hook . ladicle/org-clock-out-and-save-when-exit)
+  (org-clock-in-hook . (lambda ()
+                         (setq org-mode-line-string (ladicle/task-clocked-time))
+                         (run-at-time 0 60 (lambda ()
+                                             (setq org-mode-line-string (ladicle/task-clocked-time))
+                                             (force-mode-line-update)))
+                         (force-mode-line-update)))
+  (org-mode-hook . (lambda ()
+                     (dolist (key '("C-'" "C-," "C-."))
+                       (unbind-key key org-mode-map))))
+  (auto-save-hook . org-save-all-org-buffers)
 
   ;; agenda-viewのweekly viewで、週の始まりを今日（の曜日）にする
   ;; (org-agenda-mode . (lambda ()
   ;;                      (setq org-agenda-weekday-num (string-to-number (format-time-string "%u" (current-time))))
   ;;                      (custom-set-variables '(org-agenda-start-on-weekday org-agenda-weekday-num))))
 
-
   :preface
-  (setq memo-dir   "memo/"
-        issue-dir  "issue/"
-        diary-dir  "diary/"
-        agenda-dir "agenda/")
-  (defun chpn/deploy-templates-if-not-exist (from-base to-base dirlist)
-    (mapc (lambda (dir) (unless (file-directory-p (concat to-base dir))
-                          (copy-directory (concat from-base dir) to-base nil t))) dirlist))
-  (defun agenda-inbox    () (interactive) (org-agenda nil "i"))
-  (defun agenda-task     () (interactive) (org-agenda nil "p"))
-  (defun diary-today     () (interactive) (chpn/open-file (ladicle/get-today-diary)))
-  (defun diary-yesterday () (interactive) (chpn/open-file (ladicle/get-yesterday-diary)))
-  (defun diary-from-cal  () (interactive) (chpn/open-file (ladicle/get-diary-from-cal)))
-  (defun open-memo       () (interactive) (chpn/open-file (consult-find (concat org-directory memo-dir) "..#")))
-
   (defun chpn/insert-today-string     () (format-time-string "%F"    (current-time)))
   (defun chpn/insert-timestamp-string () (format-time-string "%F %T" (current-time)))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
-           (dn (concat org-directory memo-dir (format-time-string "%F_" (current-time)) title)))
+           (dn (concat memo-dir (format-time-string "%F_" (current-time)) title)))
       (unless (file-directory-p dn)
         (make-directory dn))
       (concat dn "/" title ".org")))
-  (defun chpn/today-issue-string      () (concat org-directory issue-dir (format-time-string "%F_" (current-time)) (read-string "issue title: ") ".org"))
-  (defun ladicle/get-today-diary      () (concat org-directory diary-dir (format-time-string "%F.org" (current-time))))
-  (defun ladicle/get-yesterday-diary  () (concat org-directory diary-dir (format-time-string "%F.org" (time-add (current-time) (* -24 3600)))))
-  (defun ladicle/get-diary-from-cal   () (concat org-directory diary-dir (format-time-string "%F.org" (apply 'encode-time (parse-time-string (concat (org-read-date) " 00:00"))))))
+  (defun chpn/today-issue-string      () (concat issue-dir (format-time-string "%F_" (current-time)) (read-string "issue title: ") ".org"))
+  (defun ladicle/get-today-diary      () (concat diary-dir (format-time-string "%F.org" (current-time))))
+  (defun ladicle/get-yesterday-diary  () (concat diary-dir (format-time-string "%F.org" (time-add (current-time) (* -24 3600)))))
+  (defun ladicle/get-diary-from-cal   () (concat diary-dir (format-time-string "%F.org" (apply 'encode-time (parse-time-string (concat (org-read-date) " 00:00"))))))
   (defun ladicle/task-clocked-time ()
     "Return a string with the clocked time and effort, if any"
     (interactive)
@@ -961,95 +966,72 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (save-some-buffers t))
 
   :init
-  (chpn/deploy-templates-if-not-exist (concat user-emacs-directory "org-dir-template/") "~/org/" `(,agenda-dir))
+  (unless (file-directory-p agenda-dir)
+    (copy-directory (concat user-emacs-directory "org-dir-template/agenda") agenda-dir nil t t))
   :config
-  (defun org-ascii--box-string (s info)
-    "Return string S with a partial box to its left.
-INFO is a plist used as a communication channel."
-    (let ((utf8p (eq (plist-get info :ascii-charset) 'utf-8)))
-      (format (if utf8p "─────\n%s\n─────" "-----\n%s\n-----")
-	      (replace-regexp-in-string
-	       "^" (if utf8p " " " ")
-	       ;; Remove last newline character.
-	       (replace-regexp-in-string "\n[ \t]*\\'" "" s))))))
+  (leaf org-bullets :ensure t
+    :hook
+    (org-mode-hook . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list . '("" "" "" "" "" "" "" "" "" "")))
 
-(use-package org-bullets
-  :ensure t
-  :defer t
-  :after org
-  :hook
-  (org-mode . org-bullets-mode)
+  ;; Pomodoro (from @ladicle)
+  (leaf org-pomodoro :ensure t
+    :custom
+    (org-pomodoro-ask-upon-killing . t)
+    (org-pomodoro-keep-killed-pomodoro-time . t)
+    (org-pomodoro-manual-break . t)
+    (org-pomodoro-long-break-frequency . 4)
+    (org-pomodoro-format . "%s") ;;  
+    (org-pomodoro-short-break-format . "%s")
+    (org-pomodoro-long-break-format . "%s")
+    (org-pomodoro-overtime-format . "%s")
+    (org-pomodoro-length . 25)
+    (org-pomodoro-short-break-length . 5)
+    (org-pomodoro-long-break-length . 15)
+    ;; :custom-face
+    ;; (org-pomodoro-mode-line . ((t (:foreground "#ff5555"))))
+    ;; (org-pomodoro-mode-line-break . ((t (:foreground "#50fa7b"))))
 
-  :custom
-  (org-bullets-bullet-list '("" "" "" "" "" "" "" "" "" "")))
+    :bind
+    (org-agenda-mode-map
+     :package org-agenda
+     ("P" . org-pomodoro))
 
-;; Pomodoro (from @ladicle)
-(use-package org-pomodoro
-  :ensure t
-  :defer t
-  :after org-agenda
-  :custom
-  (org-pomodoro-ask-upon-killing t)
-  (org-pomodoro-keep-killed-pomodoro-time t)
-  (org-pomodoro-manual-break t)
-  (org-pomodoro-long-break-frequency 4)
-  (org-pomodoro-format "%s") ;;  
-  (org-pomodoro-short-break-format "%s")
-  (org-pomodoro-long-break-format  "%s")
-  (org-pomodoro-overtime-format "%s")
-  (org-pomodoro-length 25)
-  (org-pomodoro-short-break-length 5)
-  (org-pomodoro-long-break-length 15)
 
-  :custom-face
-  (org-pomodoro-mode-line ((t (:foreground "#ff5555"))))
-  (org-pomodoro-mode-line-break   ((t (:foreground "#50fa7b"))))
+    ;; :preface
+    ;; ;; from https://gist.github.com/ayman/bb72a25e16af9e6f30bf
+    ;; (defun terminal-notifier-notify (title message)
+    ;;   "Show a message with `terminal-notifier-command`."
+    ;;   (start-process "terminal-notifier"
+    ;;                  "*terminal-notifier*"
+    ;;                  (executable-find "terminal-notifier")
+    ;;                  "-title" title
+    ;;                  "-message" message))
 
-  :bind
-  (:map org-agenda-mode-map
-        ("C" . org-agenda-columns)
-        ("w" . org-agenda-refile)
-        ("d" . org-agenda-set-property)
-        ("P" . org-pomodoro)
-        ("W" . org-agenda-week-view)
-        ("D" . org-agenda-day-view))
+    ;; (defun chpn/pomodoro-notify (title body)
+    ;;   "Save buffers and stop clocking when kill emacs."
+    ;;   (cond
+    ;;    ((eq system-type 'darwin)
+    ;;     (terminal-notifier-notify title body))
+    ;;    ((eq system-type 'gnu/linux)
+    ;;     (notifications-notify :title title :body body))
+    ;;    ((eq system-type 'windows-nt)
+    ;;     (w32-notification-notify :title title :body body))))
 
-  :preface
-  ;; from https://gist.github.com/ayman/bb72a25e16af9e6f30bf
-  (defun terminal-notifier-notify (title message)
-    "Show a message with `terminal-notifier-command`."
-    (start-process "terminal-notifier"
-                   "*terminal-notifier*"
-                   (executable-find "terminal-notifier")
-                   "-title" title
-                   "-message" message))
+    ;; :hook
+    ;; (org-pomodoro-started-hook              . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "スタート！25分間がんばろう")))
+    ;; (org-pomodoro-overtime-hook             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "25分間お疲れ様！まだがんばる？")))
+    ;; (org-pomodoro-finished-hook             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "お疲れ様！休憩にしましょう")))
+    ;; (org-pomodoro-short-break-finished-hook . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "小休憩終わり！またがんばりましょう")))
+    ;; (org-pomodoro-long-break-finished-hook  . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroを一周したよ！またよろしくね")))
+    ;; (org-pomodoro-killed-hook               . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroをkillしたよ！またよろしくね")))
+    )
 
-  (defun chpn/pomodoro-notify (title body)
-    "Save buffers and stop clocking when kill emacs."
-    (cond
-     ((eq system-type 'darwin)
-      (terminal-notifier-notify title body))
-     ((eq system-type 'gnu/linux)
-      (notifications-notify :title title :body body))
-     ((eq system-type 'windows-nt)
-      (w32-notification-notify :title title :body body))))
+  (leaf org-re-reveal :ensure t)
+  (leaf company-org-block :ensure t))
 
-  :hook
-  (org-pomodoro-started              . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "スタート！25分間がんばろう")))
-  (org-pomodoro-overtime             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "25分間お疲れ様！まだがんばる？")))
-  (org-pomodoro-finished             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "お疲れ様！休憩にしましょう")))
-  (org-pomodoro-short-break-finished . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "小休憩終わり！またがんばりましょう")))
-  (org-pomodoro-long-break-finished  . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroを一周したよ！またよろしくね")))
-  (org-pomodoro-killed               . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroをkillしたよ！またよろしくね"))))
-
-(use-package org-re-reveal
-  :ensure t
-  :defer t
-  :after org)
-
-(leaf company-org-block :ensure t)
-
-  ;; latex
+;; latex
 (leaf ox-latex
   :after org
   :custom
