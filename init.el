@@ -20,13 +20,18 @@
 
   (defconst chpn/dir-pkg-elpa "~/.elisp/elpa/")
   (defconst chpn/dir-pkg-elget "~/.elisp/el-get/")
-  (defconst chpn/dir-pkg-local "~/.elisp/local/")
+  (defconst chpn/dir-pkg-local (concat user-emacs-directory "local-elisp/"))
   (unless (file-directory-p chpn/dir-pkg-local)
-    (make-directory chpn/dir-pkg-local t)))
+    (make-directory chpn/dir-pkg-local t))
+  (add-to-list 'load-path chpn/dir-pkg-local))
 
 (eval-and-compile
-  (add-to-list 'load-path chpn/dir-pkg-local)
-  (require 'local-proxy-conf nil t)
+  ;; HTTP_PROXY環境変数が存在している場合のみ、「scheme://」を削った文字列をプロキシとして設定する
+  ;; HTTP_PROXYおよびHTTPS_PROXYは同じになる想定
+  (let ((http-proxy (getenv "HTTP_PROXY")))
+    (when http-proxy
+      (let ((proxy-host (replace-regexp-in-string ".*//" "" http-proxy)))
+        (customize-set-variable 'url-proxy-services '(("http" . proxy-host) ("https" . proxy-host))))))
 
   (customize-set-variable
    'package-archives '(("org"          . "https://orgmode.org/elpa/")

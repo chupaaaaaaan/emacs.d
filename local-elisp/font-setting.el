@@ -4,7 +4,7 @@
 
 ;;; Code:
 
-(defvar my:font-size 12)
+(defvar my:font-size 18)
 (defvar my:font-family "Ricty Diminished")
 
 (provide 'font-setting)
