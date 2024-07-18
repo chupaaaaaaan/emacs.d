@@ -1035,6 +1035,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;; latex
 (leaf ox-latex
   :after org
+  :defvar org-format-latex-options
+  :config
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.5))
   :custom
   (org-latex-default-class . "bxjsarticle")
   (org-latex-pdf-process . '("latexmk -e '$latex=q/uplatex %S/' -e '$bibtex=q/upbibtex %B/' -e '$biber=q/biber --bblencoding=utf8 -u -U --output_safechars %B/' -e '$makeindex=q/upmendex -o %D %S/' -e '$dvipdf=q/dvipdfmx -o %D %S/' -norc -gg -pdfdvi %f"))
