@@ -738,15 +738,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defconst org-dir "~/org/")
-(defconst memo-dir (concat org-dir "memo/"))
-(defconst issue-dir (concat org-dir "issue/"))
-(defconst diary-dir (concat org-dir "diary/"))
-(defconst agenda-dir (concat org-dir "agenda/"))
-(defconst note-file (concat org-dir "notes.org"))
+(require 'org-path-setting nil t)
+(defconst memo-dir (concat my:org-dir "memo/"))
+(defconst issue-dir (concat my:org-dir "issue/"))
+(defconst diary-dir (concat my:org-dir "diary/"))
+(defconst agenda-dir (concat my:org-dir "agenda/"))
+(defconst note-file (concat my:org-dir "notes.org"))
 (defconst inbox-file (concat agenda-dir "inbox.org"))
-(defconst plantuml-jar (chpn/from-dir-jars "plantuml.jar"))
-(defconst archive-pattern (concat org-dir "agenda/archive/archive_%s::"))
+(defconst archive-file (concat agenda-dir "archive/archive_%s::"))
 (leaf org :ensure t
   :defvar (org-mode-line-string
            org-default-notes-file
@@ -859,7 +858,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-columns-default-format . "%40ITEM %TODO %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
 
   ;; ;; archive
-  (org-archive-location . archive-pattern)
+  (org-archive-location . archive-file)
 
   ;; source code
   (org-src-tab-acts-natively . t)
@@ -880,7 +879,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                           ("sqlite" . sql)))
 
   ;; plantuml
-  (org-plantuml-jar-path . plantuml-jar)
+  `(org-plantuml-jar-path . ,(chpn/from-dir-jars "plantuml.jar"))
   (org-babel-load-languages . '((plantuml . t)))
 
   :bind
