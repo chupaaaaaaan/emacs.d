@@ -20,7 +20,7 @@
 
   (defconst chpn/dir-pkg-elpa "~/.elisp/elpa/")
   (defconst chpn/dir-pkg-elget "~/.elisp/el-get/")
-  (defconst chpn/dir-pkg-local (concat user-emacs-directory "local-elisp/"))
+  (defconst chpn/dir-pkg-local  "~/.elisp/local/")
   (unless (file-directory-p chpn/dir-pkg-local)
     (make-directory chpn/dir-pkg-local t))
   (add-to-list 'load-path chpn/dir-pkg-local))
