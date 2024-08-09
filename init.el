@@ -780,14 +780,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-start-on-weekday . 2)
   (org-agenda-custom-commands . `(("i" "Agenda: 予定表"
                                    ((agenda "" ((org-agenda-span 'day)))
+                                    (tags-todo "+INBOX"
+                                               ((org-agenda-overriding-header "Inbox")
+                                                (org-agenda-todo-ignore-scheduled nil)
+                                                (org-tags-match-list-sublevels nil)))
                                     (tags-todo "-INBOX+HABIT" ((org-agenda-overriding-header "Habit")
                                                                (org-agenda-sorting-strategy '(category-keep)))) nil))
                                   ("p" "Tasks: タスク"
                                    ((agenda "" ((org-agenda-span 'week)))
-                                    (tags-todo "+INBOX"
-                                               ((org-agenda-overriding-header "Inbox")
-                                                ;; (org-agenda-todo-ignore-scheduled nil)
-                                                (org-tags-match-list-sublevels nil)))
                                     (tags-todo "-INBOX-HABIT/-REFR-SOME-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-tags-match-list-sublevels 'indented)
