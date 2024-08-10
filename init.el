@@ -531,6 +531,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (modus-themes-bold-constructs . nil)
   (modus-themes-hl-line . '(underline accented))
   (modus-themes-region . '(bg-only no-extend))
+  (modus-themes-to-toggle . '(modus-operandi-tinted modus-vivendi-tinted))
   :bind
   ("<f5>" . modus-themes-toggle)
   :config
