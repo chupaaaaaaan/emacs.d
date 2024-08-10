@@ -109,6 +109,7 @@
   (auto-save-timeout . 20)
   (auto-save-interval . 60)
   (bidi-paragraph-direction . 'left-to-right)
+  (display-line-numbers . t)
   `(gc-cons-threshold . ,(* 10 gc-cons-threshold)))
 
 (leaf cus-edit
