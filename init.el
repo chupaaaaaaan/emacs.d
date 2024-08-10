@@ -391,7 +391,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    :package init
    ("g" . golden-ratio-mode))
   :custom
-  (golden-ratio-mode . t)
+  ;; (golden-ratio-mode . t)
   (golden-ratio-extra-commands . '(ace-window
                                    projectile-vc
                                    persp-list-buffers
@@ -408,6 +408,20 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("M-o" . ace-window)
   :custom
   (aw-dispatch-always . t))
+
+(leaf follow
+  :defvar (follow-mode)
+  :leaf-defer nil
+  :bind
+  (chpn-toggle-map
+   :package init
+   ("f" . toggle-follow-mode))
+  :preface
+  (defun toggle-follow-mode ()
+    "Toggle follow mode."
+    (interactive)
+    (follow-mode (if follow-mode -1 1))
+    (message "Follow mode %s" (if follow-mode "enabled" "disabled"))))
 
 ;; (leaf perspective
 ;;   :ensure t
