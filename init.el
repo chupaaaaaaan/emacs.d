@@ -462,11 +462,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :hook
   (treemacs-mode-hook . hide-mode-line-mode))
 
-;; Commented out due to bug.
-;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2012-11/msg00862.html
-;; (leaf hl-line
-;;   :custom
-;;   (global-hl-line-mode . t))
+(leaf hl-line
+  :custom
+  (global-hl-line-mode . t))
 
 (leaf paren
   :leaf-defer nil
