@@ -536,6 +536,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :config
   (load-theme 'modus-vivendi-tinted t))
 
+(leaf dashboard :ensure t
+  :config
+  (dashboard-setup-startup-hook))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility
@@ -759,7 +762,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf org :ensure t
   :defvar (org-mode-line-string
            org-default-notes-file
-           org-clock-effort)
+           org-clock-effort
+           recentf-exclude)
   :defun (org-clock-get-clocked-time
           org-clock-out
           org-duration-to-minutes
@@ -927,7 +931,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("D" . org-agenda-day-view))
 
   :hook
-  (emacs-startup-hook . (lambda () (org-agenda nil "i")))
+  ;; (emacs-startup-hook . (lambda () (org-agenda nil "i")))
   (kill-emacs-hook . ladicle/org-clock-out-and-save-when-exit)
   (org-clock-in-hook . (lambda ()
                          (setq org-mode-line-string (ladicle/task-clocked-time))
@@ -983,6 +987,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (unless (file-directory-p agenda-dir)
     (copy-directory (concat user-emacs-directory "org-dir-template/agenda") agenda-dir nil t t))
   :config
+  (dolist (pattern '(,agenda-dir ,note-file))
+    (add-to-list 'recentf-exclude pattern))
   (leaf org-bullets :ensure t
     :hook
     (org-mode-hook . org-bullets-mode)
