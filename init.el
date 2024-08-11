@@ -521,8 +521,18 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   (highlight-indent-guides-character . 124)
   (highlight-indent-guides-auto-enabled . t)
-  (highlight-indent-guides-responsive . t)
-  (highlight-indent-guides-method . 'fill) ;; or 'column, 'character, 'bitmap
+  (highlight-indent-guides-responsive . 'stack)
+  (highlight-indent-guides-method . 'column) ;; 'fill, 'column, 'character, 'bitmap
+  ;; modus-vivendi-tinted テーマ向けに値を調整
+  (highlight-indent-guides-auto-odd-face-perc . 90)
+  (highlight-indent-guides-auto-even-face-perc . 180)
+  (highlight-indent-guides-auto-character-face-perc . 180)
+  (highlight-indent-guides-auto-top-odd-face-perc . 450)
+  (highlight-indent-guides-auto-top-even-face-perc . 540)
+  (highlight-indent-guides-auto-top-character-face-perc . 540)
+  (highlight-indent-guides-auto-stack-odd-face-perc . 270)
+  (highlight-indent-guides-auto-stack-even-face-perc . 360)
+  (highlight-indent-guides-auto-stack-character-face-perc . 360)
   :preface
   (defun toggle-highlight-indent-guides ()
     "Toggle highlight indent guides."
