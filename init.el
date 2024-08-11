@@ -110,7 +110,24 @@
   (auto-save-interval . 60)
   (bidi-paragraph-direction . 'left-to-right)
   (display-line-numbers . t)
-  `(gc-cons-threshold . ,(* 10 gc-cons-threshold)))
+  `(gc-cons-threshold . ,(* 10 gc-cons-threshold))
+  :hook
+  (after-change-major-mode-hook . disable-line-numbers-for-specific-modes)
+  (buffer-list-update-hook . disable-line-numbers-for-starred-buffers)
+  :preface
+  (defun disable-line-numbers-for-specific-modes ()
+    "Disable line numbers for specific modes."
+    (when (derived-mode-p 'eshell-mode
+                          'shell-mode
+                          'vterm-mode
+                          'dired-mode
+                          'org-agenda-mode
+                          'treemacs-mode)
+      (display-line-numbers-mode 0)))
+  (defun disable-line-numbers-for-starred-buffers ()
+    "Disable line numbers for buffers with names like *scratch* or *Messages*."
+    (when (string-match-p "^\*.*\*$" (buffer-name))
+      (display-line-numbers-mode 0))))
 
 (leaf cus-edit
   :custom
