@@ -565,6 +565,19 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (load-theme 'modus-vivendi-tinted t))
 
 (leaf dashboard :ensure t
+  :require t
+  :custom
+  (dashboard-startup-banner . 'logo)
+  (dashboard-center-content . t)
+  (dashboard-icon-type . 'all-the-icons)
+  (dashboard-set-heading-icons . t)
+  (dashboard-set-file-icons . t)
+  (dashboard-items . '((recents   . 7)
+                       (bookmarks . 15)
+                       (registers . 5)
+                       (projects  . 5)))
+  :bind
+  ("<f6>" . dashboard-open)
   :config
   (dashboard-setup-startup-hook))
 
