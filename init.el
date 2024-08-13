@@ -31,7 +31,7 @@
   (let ((http-proxy (getenv "HTTP_PROXY")))
     (when http-proxy
       (let ((proxy-host (replace-regexp-in-string ".*//" "" http-proxy)))
-        (customize-set-variable 'url-proxy-services '(("http" . proxy-host) ("https" . proxy-host))))))
+        (customize-set-variable 'url-proxy-services `(("http" . ,proxy-host) ("https" . ,proxy-host))))))
 
   (customize-set-variable
    'package-archives '(("org"          . "https://orgmode.org/elpa/")
