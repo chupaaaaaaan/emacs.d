@@ -592,10 +592,13 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 ;; Recent files
 (leaf recentf
+  :defvar recentf-exclude
   :custom
   (recentf-mode . t)
   (recentf-max-saved-items . 20000000)
   (recentf-auto-cleanup . 'never)
+  :config
+  (add-to-list 'recentf-exclude user-emacs-directory)
   ;; :hook
   ;; (focus-out-hook . (ladicle/recentf-save-list-silence ladicle/recentf-cleanup-silence))
   ;; :preface
@@ -1029,7 +1032,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (unless (file-directory-p agenda-dir)
     (copy-directory (concat user-emacs-directory "org-dir-template/agenda") agenda-dir nil t t))
   :config
-  (dolist (pattern '(,agenda-dir ,note-file))
+  (dolist (pattern `(,agenda-dir ,note-file))
     (add-to-list 'recentf-exclude pattern))
   (leaf org-bullets :ensure t
     :hook
