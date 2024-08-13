@@ -113,7 +113,7 @@
   `(gc-cons-threshold . ,(* 10 gc-cons-threshold))
   :hook
   (after-change-major-mode-hook . disable-line-numbers-for-specific-modes)
-  (buffer-list-update-hook . disable-line-numbers-for-starred-buffers)
+  (buffer-list-update-hook . disable-line-numbers-for-buffer-name-patterns)
   :preface
   (defun disable-line-numbers-for-specific-modes ()
     "Disable line numbers for specific modes."
@@ -124,10 +124,11 @@
                           'org-agenda-mode
                           'treemacs-mode)
       (display-line-numbers-mode 0)))
-  (defun disable-line-numbers-for-starred-buffers ()
-    "Disable line numbers for buffers with names like *scratch* or *Messages*."
-    (when (string-match-p "^\*.*\*$" (buffer-name))
-      (display-line-numbers-mode 0))))
+  (defun disable-line-numbers-for-buffer-name-patterns ()
+   "Disable line numbers for buffers with names which match some patterns."
+   (dolist (pattern '("^\*.*\*$" "^CAPTURE-.*\.org$"))
+     (when (string-match-p pattern (buffer-name))
+       (display-line-numbers-mode 0)))))
 
 (leaf cus-edit
   :custom
