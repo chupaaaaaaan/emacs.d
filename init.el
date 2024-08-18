@@ -525,15 +525,15 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (highlight-indent-guides-responsive . 'stack)
   (highlight-indent-guides-method . 'column) ;; 'fill, 'column, 'character, 'bitmap
   ;; modus-vivendi-tinted テーマ向けに値を調整
-  (highlight-indent-guides-auto-odd-face-perc . 90)
-  (highlight-indent-guides-auto-even-face-perc . 180)
-  (highlight-indent-guides-auto-character-face-perc . 180)
-  (highlight-indent-guides-auto-top-odd-face-perc . 450)
-  (highlight-indent-guides-auto-top-even-face-perc . 540)
-  (highlight-indent-guides-auto-top-character-face-perc . 540)
-  (highlight-indent-guides-auto-stack-odd-face-perc . 270)
-  (highlight-indent-guides-auto-stack-even-face-perc . 360)
-  (highlight-indent-guides-auto-stack-character-face-perc . 360)
+  (highlight-indent-guides-auto-odd-face-perc . 50)
+  (highlight-indent-guides-auto-even-face-perc . 100)
+  (highlight-indent-guides-auto-character-face-perc . 100)
+  (highlight-indent-guides-auto-top-odd-face-perc . 500)
+  (highlight-indent-guides-auto-top-even-face-perc . 600)
+  (highlight-indent-guides-auto-top-character-face-perc . 600)
+  (highlight-indent-guides-auto-stack-odd-face-perc . 225)
+  (highlight-indent-guides-auto-stack-even-face-perc . 300)
+  (highlight-indent-guides-auto-stack-character-face-perc . 300)
   :preface
   (defun toggle-highlight-indent-guides ()
     "Toggle highlight indent guides."
