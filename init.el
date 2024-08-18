@@ -1550,6 +1550,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (web-mode-html-attr-value-face . '((nil (:foreground "Yellow"))))
   (web-mode-html-attr-name-face . '((nil (:foreground "#0FF")))))
 
+(leaf web-beautify :ensure t)
 
 (provide 'init)
 ;;; init.el ends here
