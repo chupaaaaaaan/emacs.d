@@ -193,7 +193,7 @@
   :bind
   (chpn-toggle-map
    :package init
-   ("h" . hungry-delete-mode))
+   ("d" . hungry-delete-mode))
   :custom
   (global-hungry-delete-mode . t)
   (hungry-delete-join-reluctantly . t))
@@ -482,7 +482,11 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf hl-line
   :custom
-  (global-hl-line-mode . t))
+  (global-hl-line-mode . t)
+  :bind
+  (chpn-toggle-map
+   :package init
+   ("h" . global-hl-line-mode)))
 
 (leaf paren
   :leaf-defer nil
