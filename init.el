@@ -339,51 +339,50 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (switch-to-buffer (find-file-noselect fname)))
 
 ;; locale and environment
-(leaf *language-environment
-  :leaf-defer nil
+;; (leaf *language-environment
+;;   :init
+;;   ;; coding system
+;;   (prefer-coding-system 'utf-8-unix)
+;;   (cond ((eq system-type 'darwin)
+;;          (set-file-name-coding-system 'utf-8-hfs)
+;;          (setq locale-coding-system 'utf-8-hfs)
+;;          (define-key local-function-key-map [?\C-¥] [?\C-\\])
+;;          (define-key local-function-key-map [?\M-¥] [?\M-\\])
+;;          (define-key local-function-key-map [?\C-\M-¥] [?\C-\M-\\]))
+;;         ;; ((eq system-type 'windows-nt)
+;;         ;;  (set-file-name-coding-system 'cp932)
+;;         ;;  (setq locale-coding-system 'cp932))
+;;         (t
+;;          (set-file-name-coding-system 'utf-8)
+;;          (setq locale-coding-system 'utf-8))))
+;; (leaf ucs-normalize
+;;   :if (eq system-type 'darwin)
+;;   :require t)
+
+
+(leaf mule
   :custom
   (default-input-method . "japanese-mozc")
-  (current-language-environment . "Japanese")
+  (current-language-environment . "Japanese"))
+
+;; input method
+(leaf mozc :ensure t
+  :if (eq system-type 'gnu/linux)
+  :bind
+  (minibuffer-local-map
+   ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
+   ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method)))))
+  :bind*
+  ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
+  ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
   :config
-  ;; coding system
-  (prefer-coding-system 'utf-8-unix)
-  (cond ((eq system-type 'darwin)
-         (set-file-name-coding-system 'utf-8-hfs)
-         (setq locale-coding-system 'utf-8-hfs))
-        ;; ((eq system-type 'windows-nt)
-        ;;  (set-file-name-coding-system 'cp932)
-        ;;  (setq locale-coding-system 'cp932))
-        (t
-         (set-file-name-coding-system 'utf-8)
-         (setq locale-coding-system 'utf-8)))
-  ;; input method
-  (leaf mozc :ensure t
-    :if (eq system-type 'gnu/linux)
-    :bind
-    (minibuffer-local-map
-     ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
-     ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method)))))
-    :bind*
-    ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
-    ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
-    :config
-    (leaf mozc-posframe
-      ;; :straight (mozc-posframe :type git :host github :repo "derui/mozc-posframe")
-      :el-get (mozc-posframe
-               :url "https://raw.githubusercontent.com/derui/mozc-posframe/master/mozc-posframe.el"
-               :features mozc-posframe)
-      :custom
-      (mozc-candidate-style . 'posframe))))
-
-;; keybinds including back slashes
-(when (eq system-type 'darwin)
-  (define-key local-function-key-map [?\C-¥] [?\C-\\])
-  (define-key local-function-key-map [?\M-¥] [?\M-\\])
-  (define-key local-function-key-map [?\C-\M-¥] [?\C-\M-\\]))
-
-(leaf ucs-normalize
-  :if (eq system-type 'darwin)
-  :require t)
+  (leaf mozc-posframe
+    ;; :straight (mozc-posframe :type git :host github :repo "derui/mozc-posframe")
+    :el-get (mozc-posframe
+             :url "https://raw.githubusercontent.com/derui/mozc-posframe/master/mozc-posframe.el"
+             :features mozc-posframe)
+    :custom
+    (mozc-candidate-style . 'posframe)))
 
 (leaf exec-path-from-shell :ensure t
   :if (or (eq system-type 'darwin)
