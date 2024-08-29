@@ -924,26 +924,15 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-archive-location . archive-file)
 
   ;; source code
+  ;; org-src-lang-modes は、言語名とメジャーモード名が一致していれば設定不要っぽい
   (org-src-tab-acts-natively . t)
-  (org-src-lang-modes . '(("C" . c)
-                          ("C++" . c++)
-                          ("asymptote" . asy)
-                          ("bash" . sh)
-                          ("beamer" . latex)
-                          ("calc" . fundamental)
-                          ("cpp" . c++)
-                          ("ditaa" . artist)
-                          ("dot" . fundamental)
-                          ("elisp" . emacs-lisp)
-                          ("ocaml" . tuareg)
-                          ("plantuml" . plantuml)
-                          ("screen" . shell-script)
-                          ("shell" . sh)
-                          ("sqlite" . sql)))
 
-  ;; plantuml
+  ;; babel
+  (org-babel-load-languages . '((plantuml . t)
+                                (sql . t)
+                                (java . t)
+                                (haskell . t)))
   `(org-plantuml-jar-path . ,(chpn/from-dir-jars "plantuml.jar"))
-  (org-babel-load-languages . '((plantuml . t)))
 
   :bind
   ("C-c c" . org-capture)
