@@ -403,7 +403,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (emacs-startup-hook . which-key-mode))
 
 (leaf golden-ratio :ensure t
-  :leaf-defer nil
   :blackout t
   :bind
   (chpn-toggle-map
@@ -422,7 +421,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                   imenu-list-major-mode)))
 
 (leaf ace-window :ensure t
-  :leaf-defer nil
   :bind
   ("M-o" . ace-window)
   :custom
@@ -430,7 +428,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf follow
   :defvar (follow-mode)
-  :leaf-defer nil
   :bind
   (chpn-toggle-map
    :package init
@@ -489,7 +486,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("h" . global-hl-line-mode)))
 
 (leaf paren
-  :leaf-defer nil
+  :require t
   :custom-face
   ;; (show-paren-match ((nil (:underline "#ff5555"))))
   (show-paren-match . '((nil (:background "#44475a" :foreground "#f1fa8c"))))
@@ -557,7 +554,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 
 (leaf modus-themes :ensure t
-  :leaf-defer nil
+  :require t
   :custom
   (modus-themes-italic-constructs . t)
   (modus-themes-bold-constructs . nil)
