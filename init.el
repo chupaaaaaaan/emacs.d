@@ -894,7 +894,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   ;; capture
   (org-capture-templates . `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
-                              "* %?\n"
+                              "* %?\n#+OPTIONS: toc:nil\n"
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("i" "inbox: 新規タスク" entry (file ,inbox-file)
                               "* TODO [/] %?\n:PROPERTIES:\n:COOKIE_DATA: checkbox\n:END:\n%U"
