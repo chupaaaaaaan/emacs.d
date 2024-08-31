@@ -946,7 +946,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("t" . (lambda () (interactive) (chpn/open-file (ladicle/get-today-diary))))
    ("y" . (lambda () (interactive) (chpn/open-file (ladicle/get-yesterday-diary))))
    ("c" . (lambda () (interactive) (chpn/open-file (ladicle/get-diary-from-cal))))
-   ("m" . (lambda () (interactive) (chpn/open-file (consult-find memo-dir "..#")))))
+   ("m" . (lambda () (interactive) (chpn/open-file (consult-find memo-dir "\.org#")))))
   (org-mode-map
    ;; ("C-c i" . org-clock-in)
    ;; ("C-c o" . org-clock-out)
