@@ -1,4 +1,4 @@
-#+DATE: %(chpn/insert-today-string)
+#+DATE: %<%F>
 #+OPTIONS: ^:{}
 #+OPTIONS: \n:t
 #+OPTIONS: toc:nil
@@ -6,9 +6,9 @@
 * 問題の発見 (What)
 
 ** %?
-   - あるべき姿    :: 
-   - 現実の姿      :: 
-   - ギャップ=問題 :: 
+- あるべき姿    :: 
+- 現実の姿      :: 
+- ギャップ=問題 :: 
 
 
 * 問題の特定 (Where)

@@ -1,7 +1,8 @@
-#+TITLE: %?
+#+TITLE: %c
 #+DATE: %(chpn/insert-today-string)
 #+OPTIONS: ^:{}
 #+OPTIONS: \n:t
 #+OPTIONS: toc:nil
 #+OPTIONS: H:3
 
+%?

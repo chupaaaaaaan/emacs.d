@@ -1,3 +1,3 @@
 * TODO %?
-SCHEDULED: <%(org-read-date t)>
+SCHEDULED: %^{予定日時を入力してください}T
 %U

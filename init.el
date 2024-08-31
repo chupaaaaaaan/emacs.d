@@ -992,10 +992,13 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (defun chpn/insert-timestamp-string () (format-time-string "%F %T" (current-time)))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
-           (dn (concat memo-dir (format-time-string "%F_" (current-time)) title)))
+           (dn (concat memo-dir (format-time-string "%F_" (current-time)) title))
+           (kr (cons title kill-ring)))
+      (setq kill-ring (delete-dups kr))
+      (setq kill-ring-yank-pointer kill-ring)
       (unless (file-directory-p dn)
         (make-directory dn))
-      (concat dn "/" title ".org")))
+      (concat dn "/index.org")))
   (defun chpn/today-issue-string      () (concat issue-dir (format-time-string "%F_" (current-time)) (read-string "issue title: ") ".org"))
   (defun ladicle/get-today-diary      () (concat diary-dir (format-time-string "%F.org" (current-time))))
   (defun ladicle/get-yesterday-diary  () (concat diary-dir (format-time-string "%F.org" (time-add (current-time) (* -24 3600)))))
@@ -1023,7 +1026,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :init
   (unless (file-directory-p agenda-dir)
-    (copy-directory (concat user-emacs-directory "org-dir-template/agenda") agenda-dir nil t t))
+    (copy-directory my:agenda-template-dir agenda-dir nil t t))
   :config
   (dolist (pattern `(,agenda-dir ,note-file))
     (add-to-list 'recentf-exclude pattern))
