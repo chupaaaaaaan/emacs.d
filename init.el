@@ -893,14 +893,17 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-capture-templates . `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
                               "* %?\n#+OPTIONS: toc:nil\n"
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
-                             ("i" "inbox: 新規タスク" entry (file ,inbox-file)
-                              "* TODO [/] %?\n:PROPERTIES:\n:COOKIE_DATA: checkbox\n:END:\n%U"
+                             ("t" "task: 新規タスク" entry (file ,inbox-file)
+                              ,(concat "%[" my:capture-template-dir "inbox.org" "]")
                               :empty-lines 1 :jump-to-captured nil)
                              ("s" "schedule: スケジュール" entry (file ,inbox-file)
-                              "* TODO %?\nSCHEDULED: <%(org-read-date t)>\n%U"
+                              ,(concat "%[" my:capture-template-dir "schedule.org" "]")
                               :empty-lines 1)
                              ("m" "memo: 新規文書" plain (file chpn/today-memo-string-with-mkdir)
-                              "#+TITLE: %?\n#+DATE: %(chpn/insert-today-string)\n#+OPTIONS: ^:{}\n#+OPTIONS: \\n:t\n#+OPTIONS: toc:nil\n#+OPTIONS: H:3\n\n"
+                              ,(concat "%[" my:capture-template-dir "memo.org" "]")
+                              :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
+                             ("i" "issue: 課題形成" plain (file chpn/today-issue-string)
+                              ,(concat "%[" my:capture-template-dir "issue.org" "]")
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("l" "link: リンクを追加" item (clock)
                               "%A\n"
