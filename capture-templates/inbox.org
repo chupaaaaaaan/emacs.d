@@ -1,4 +1,5 @@
 * TODO [/] %?
+SCHEDULED: %t
 :PROPERTIES:
 :COOKIE_DATA: checkbox
 :END:

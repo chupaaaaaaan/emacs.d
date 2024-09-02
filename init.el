@@ -843,10 +843,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-start-on-weekday . 2)
   (org-agenda-custom-commands . `(("i" "Agenda: 予定表"
                                    ((agenda "" ((org-agenda-span 'day)))
-                                    (tags-todo "+INBOX"
-                                               ((org-agenda-overriding-header "Inbox")
-                                                (org-agenda-todo-ignore-scheduled nil)
-                                                (org-tags-match-list-sublevels nil)))
                                     (tags-todo "-INBOX+HABIT" ((org-agenda-overriding-header "Habit")
                                                                (org-agenda-sorting-strategy '(category-keep)))) nil))
                                   ("p" "Tasks: タスク"
@@ -855,7 +851,11 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-tags-match-list-sublevels 'indented)
                                                 (org-agenda-todo-ignore-scheduled 'all)
-                                                (org-agenda-sorting-strategy '(priority-down scheduled-up)))) nil))))
+                                                (org-agenda-sorting-strategy '(priority-down scheduled-up))))
+                                    (tags-todo "+INBOX"
+                                               ((org-agenda-overriding-header "Inbox")
+                                                (org-agenda-todo-ignore-scheduled nil)
+                                                (org-tags-match-list-sublevels nil))) nil))))
 
   ;; refile
   (org-refile-use-outline-path . 'file)
@@ -886,8 +886,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-track-ordered-property-with-tag . t)
   (org-priority-highest . 1)
   (org-priority-lowest . 9)
-  (org-priority-default . 5)
-  (org-priority-start-cycle-with-default . nil)
+  (org-priority-default . 9)
+  ;; (org-priority-start-cycle-with-default . nil)
 
   ;; capture
   (org-capture-templates . `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
