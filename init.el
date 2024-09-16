@@ -931,6 +931,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-babel-load-languages . '((plantuml . t)
                                 (sql . t)
                                 (java . t)
+                                (shell . t)
                                 (haskell . t)))
   `(org-plantuml-jar-path . ,(chpn/from-dir-jars "plantuml.jar"))
   (org-babel-haskell-compiler . "ghc -package-db $(stack path --snapshot-pkg-db)")
