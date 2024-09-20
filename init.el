@@ -1032,6 +1032,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :config
   (dolist (pattern `(,agenda-dir ,note-file))
     (add-to-list 'recentf-exclude pattern))
+  (leaf ob-async :ensure t
+    :require t)
   (leaf org-bullets :ensure t
     :hook
     (org-mode-hook . org-bullets-mode)
