@@ -1399,8 +1399,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                        "-XX:GCTimeRatio=4"
                        "-XX:AdaptiveSizePolicyWeight=90"
                        "-Dsun.zip.disableMemoryMapping=true"
-                       ,(concat "-javaagent:" (chpn/from-dir-jars "lombok.jar"))
-                       ,(concat "-Xbootclasspath/a:" (chpn/from-dir-jars "lombok.jar"))
+                       ;; ,(concat "-javaagent:" (chpn/from-dir-jars "lombok.jar"))
+                       ;; ,(concat "-Xbootclasspath/a:" (chpn/from-dir-jars "lombok.jar"))
                        ;; "-noverify"
                        ;; "-XX:+UseG1GC"
                        ;; "-XX:+UseStringDeduplication"
