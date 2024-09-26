@@ -647,6 +647,11 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf amx :ensure t)
 
 (leaf vertico :ensure t
+  :bind
+  (vertico-map
+   :package vertico
+   ("M-RET" . minibuffer-force-complete-and-exit)
+   ("M-TAB" . minibuffer-complete))
   :custom
   (vertico-mode . t)
   (read-extended-command-predicate . #'command-completion-default-include-p))
@@ -740,8 +745,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf orderless :ensure t
   :custom
-  (completion-styles . '(orderless basic))
-  (completion-category-overrides . '((file (styles basic partial-completion)))))
+  (completion-styles . '(orderless substring basic))
+  (complefftion-category-overrides . '((file (styles orderless partial-completion substring basic)))))
 
 (leaf marginalia :ensure t
   :custom
