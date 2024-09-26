@@ -291,11 +291,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;;   :hook
 ;;   (dired-mode . all-the-icons-dired-mode))
 
-(leaf font-setting :ensure all-the-icons
+(leaf all-the-icons :ensure t)
+(leaf nerd-icons :ensure t)
+
+(leaf font-setting
   :when (display-graphic-p)
   :require t
   :defvar (my:font-size my:font-family)
-  :if (or (eq window-system 'x) (eq window-system 'w32) (eq window-system 'ns))
+  :if (window-system)
   :bind
   (chpn-function-map
    :package init
@@ -1228,7 +1231,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
      ("q" . git-timemachine-toggle)))
   (leaf magit :ensure t
     :custom
-    (magit-auto-revert-mode . nil))
+    (magit-auto-revert-mode . nil)
+    :config
+    (leaf magit-file-icons :ensure t))
   (leaf git-gutter :ensure t
     :blackout t
     :custom
