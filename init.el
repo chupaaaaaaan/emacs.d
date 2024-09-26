@@ -1032,13 +1032,21 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :config
   (dolist (pattern `(,agenda-dir ,note-file))
     (add-to-list 'recentf-exclude pattern))
-  (leaf ob-async :ensure t
-    :require t)
-  (leaf org-bullets :ensure t
-    :hook
-    (org-mode-hook . org-bullets-mode)
+  (leaf ob-async :ensure t :require t)
+
+  (leaf org-modern :ensure t
     :custom
-    (org-bullets-bullet-list . '("" "" "" "" "" "" "" "" "" "")))
+    (global-org-modern-mode . t)
+    ;; (org-modern-progress       . nil)
+    ;; (org-modern-todo           . nil)
+    ;; (org-modern-block          . nil)
+    ;; (org-modern-table-vertical . 1)
+    ;; (org-modern-timestamp      . t)
+    (org-modern-replace-stars  . '("" "" "" "" "" "" "" "" "" ""))
+    (org-modern-star           . 'replace)
+    ;; (org-modern-priority       . '((?A . "") (?B . "") (?C . "")))
+    ;; (org-modern-checkbox       . '((?X . "") (?- . "") (?\s . "")))
+    )
 
   ;; Pomodoro (from @ladicle)
   (leaf org-pomodoro :ensure t
