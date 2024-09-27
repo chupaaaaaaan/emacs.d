@@ -1314,7 +1314,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :bind
   ("M-1" . treemacs-select-window)
   (treemacs-mode-map
-   ("M-1" . other-window))
+   ("M-1" . previous-window-any-frame))
   :custom
   (treemacs-is-never-other-window . t)
   (treemacs-no-delete-other-windows . t)
