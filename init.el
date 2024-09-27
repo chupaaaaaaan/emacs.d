@@ -892,9 +892,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-enforce-todo-dependencies . t)
   (org-enforce-todo-checkbox-dependencies . t)
   (org-track-ordered-property-with-tag . t)
-  (org-priority-highest . 1)
-  (org-priority-lowest . 9)
-  (org-priority-default . 9)
+  (org-priority-highest . ?A)
+  (org-priority-lowest . ?C)
+  (org-priority-default . ?B)
   ;; (org-priority-start-cycle-with-default . nil)
 
   ;; capture
