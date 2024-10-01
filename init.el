@@ -284,15 +284,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;; Again the emacs default is too low 4k considering that the some of the language server responses are in 800k - 3M range.
 (setq read-process-output-max (* 1024 1024))
 
-;; Font
-;; ;; all-the-icons
-;; (use-package all-the-icons-dired
-;;   :ensure t
-;;   :hook
-;;   (dired-mode . all-the-icons-dired-mode))
-
-(leaf all-the-icons :ensure t)
-(leaf nerd-icons :ensure t)
+(leaf nerd-icons :ensure t :require t )
 
 (leaf font-setting
   :when (display-graphic-p)
@@ -312,20 +304,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (let* ((family my:font-family)
            (h (round (* size 10))))
       (set-face-attribute 'default nil :family family :height h)
-      (set-fontset-font nil 'unicode           (font-spec :family family) nil 'append)
-      ;; (set-fontset-font nil 'japanese-jisx0208 (font-spec :family family) nil 'append)
-      ;; (set-fontset-font nil 'japanese-jisx0212 (font-spec :family family) nil 'append)
-      ;; (set-fontset-font nil 'katakana-jisx0201 (font-spec :family family) nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "all-the-icons")   nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "Material Icons")  nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "FontAwesome")     nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "file-icons")      nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "github-octicons") nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "Weather Icons")   nil 'append)
+      (set-fontset-font nil 'unicode (font-spec :family family) nil 'append)
+      (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono")   nil 'append)
       (add-to-list 'face-font-rescale-alist (cons family 1.0))
-      (add-to-list 'face-font-rescale-alist (cons "FontAwesome" 0.85))
-      (add-to-list 'face-font-rescale-alist (cons "file-icons" 0.85))
-      (add-to-list 'face-font-rescale-alist (cons "github-octicons" 0.85))
       (message (format "Setup for %s with %f" family size))))
   (defun chpn/choice-font-size ()
     "set font size."
