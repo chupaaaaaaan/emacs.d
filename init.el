@@ -554,7 +554,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   (dashboard-startup-banner . 'logo)
   (dashboard-center-content . t)
-  (dashboard-icon-type . 'all-the-icons)
+  (dashboard-icon-type . 'nerd-icons)
   (dashboard-set-heading-icons . t)
   (dashboard-set-file-icons . t)
   (dashboard-items . '((recents   . 7)
