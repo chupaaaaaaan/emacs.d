@@ -875,7 +875,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-enforce-todo-checkbox-dependencies . t)
   (org-track-ordered-property-with-tag . t)
   (org-priority-highest . ?A)
-  (org-priority-lowest . ?C)
+  (org-priority-lowest . ?D)
   (org-priority-default . ?B)
   ;; (org-priority-start-cycle-with-default . nil)
 
@@ -1036,7 +1036,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (org-modern-list           . nil)
     (org-modern-replace-stars  . '("󰇈" "󰎥" "󰎨" "󰎫" "󰎲" "󰎯" "󰎴" "󰎷" "󰎺" "󰎽"))
     (org-modern-star           . 'replace)
-    (org-modern-priority       . '((?A . "") (?B . "") (?C . "")))
+    (org-modern-priority       . '((?A . "") (?B . "") (?C . "") (?D . "")))
     (org-modern-checkbox       . '((?X . "󰄵") (?- . "") (?\s . "󰄱"))))
 
   ;; Pomodoro (from @ladicle)
