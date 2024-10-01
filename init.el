@@ -803,6 +803,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-clock-out
           org-duration-to-minutes
           org-read-date
+          org-update-statistics-cookies
           ladicle/task-clocked-time
           chpn/insert-today-string
           chpn/insert-timestamp-string
@@ -972,6 +973,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                      (dolist (key '("C-'" "C-," "C-."))
                        (unbind-key key org-mode-map))))
   (auto-save-hook . org-save-all-org-buffers)
+  (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies "ALL")))
 
   ;; agenda-viewのweekly viewで、週の始まりを今日（の曜日）にする
   ;; (org-agenda-mode . (lambda ()
