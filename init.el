@@ -1026,16 +1026,16 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf org-modern :ensure t
     :custom
     (global-org-modern-mode . t)
-    ;; (org-modern-progress       . nil)
-    ;; (org-modern-todo           . nil)
-    ;; (org-modern-block          . nil)
-    ;; (org-modern-table-vertical . 1)
-    ;; (org-modern-timestamp      . t)
-    (org-modern-replace-stars  . '("" "" "" "" "" "" "" "" "" ""))
+    (org-modern-progress       . nil)
+    (org-modern-todo           . nil)
+    (org-modern-block          . nil)
+    (org-modern-table-vertical . 1)
+    (org-modern-timestamp      . t)
+    (org-modern-list           . nil)
+    (org-modern-replace-stars  . '("󰇈" "󰎥" "󰎨" "󰎫" "󰎲" "󰎯" "󰎴" "󰎷" "󰎺" "󰎽"))
     (org-modern-star           . 'replace)
-    ;; (org-modern-priority       . '((?A . "") (?B . "") (?C . "")))
-    ;; (org-modern-checkbox       . '((?X . "") (?- . "") (?\s . "")))
-    )
+    (org-modern-priority       . '((?A . "") (?B . "") (?C . "")))
+    (org-modern-checkbox       . '((?X . "󰄵") (?- . "") (?\s . "󰄱"))))
 
   ;; Pomodoro (from @ladicle)
   (leaf org-pomodoro :ensure t
