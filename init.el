@@ -1224,6 +1224,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (leaf magit-file-icons :ensure t))
   (leaf git-gutter :ensure t
     :blackout t
+    :bind
+    ("M-g s" . git-gutter:stage-hunk)
+    ("M-g r" . git-gutter:revert-hunk)
     :custom
     (global-git-gutter-mode . t)
     (git-gutter:modified-sign . "=")
