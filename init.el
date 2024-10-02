@@ -284,38 +284,28 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;; Again the emacs default is too low 4k considering that the some of the language server responses are in 800k - 3M range.
 (setq read-process-output-max (* 1024 1024))
 
-(leaf nerd-icons :ensure t :require t )
+(leaf nerd-icons :ensure t :require t)
 
 (leaf font-setting
-  :when (display-graphic-p)
-  :require t
-  :defvar (my:font-size my:font-family)
-  :if (window-system)
+  :if (display-graphic-p)
   :bind
   (chpn-function-map
    :package init
    ("f" . chpn/choice-font-size))
-  :preface
-  (setq use-default-font-for-symbols nil)
-  (setq inhibit-compacting-font-caches t)
-  (declare-function chpn/set-font-size nil)
-  (defun chpn/set-font-size (size)
-    "reset font size."
-    (let* ((family my:font-family)
-           (h (round (* size 10))))
-      (set-face-attribute 'default nil :family family :height h)
-      (set-fontset-font nil 'unicode (font-spec :family family) nil 'append)
-      (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono")   nil 'append)
-      (add-to-list 'face-font-rescale-alist (cons family 1.0))
-      (message (format "Setup for %s with %f" family size))))
+  :pre-setq
+  (use-default-font-for-symbols . nil)
+  (inhibit-compacting-font-caches . t)
+  :init
   (defun chpn/choice-font-size ()
     "set font size."
     (interactive)
-    (let* ((choices '(12 15 18 21 24 27))
-           (selection (string-to-number (completing-read "Font size: " (mapcar 'number-to-string choices)))))
-      (chpn/set-font-size selection)))
-  :config
-  (chpn/set-font-size my:font-size))
+    (let* ((candidates '(12 15 18 21 24 27))
+           (selection (completing-read "Font size: " (mapcar 'number-to-string candidates)))
+           (h (round (* (string-to-number selection) 10))))
+      (set-face-attribute 'default nil :height h)))
+  (set-face-attribute 'default nil :family "PlemolJP Console" :height 180)
+  (set-fontset-font nil 'unicode (font-spec :family "PlemolJP Console") nil 'append)
+  (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono")   nil 'append))
 
 ;; Functions
 (defun chpn/open-file (fname)
