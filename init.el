@@ -303,9 +303,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
            (selection (completing-read "Font size: " (mapcar 'number-to-string candidates)))
            (h (round (* (string-to-number selection) 10))))
       (set-face-attribute 'default nil :height h)))
-  (set-face-attribute 'default nil :family "PlemolJP Console" :height 180)
-  (set-fontset-font nil 'unicode (font-spec :family "PlemolJP Console") nil 'append)
-  (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono")   nil 'append))
+  (set-face-attribute 'default nil :family "Ricty ShinDiminished" :height 210)
+  (set-fontset-font nil 'unicode (font-spec :family "Ricty ShinDiminished") nil 'append)
+  (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono") nil 'append))
 
 ;; Functions
 (defun chpn/open-file (fname)
