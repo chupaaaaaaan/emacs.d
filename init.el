@@ -817,7 +817,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'org-path-setting nil t)
 (defconst memo-dir (concat my:org-dir "memo/"))
 (defconst issue-dir (concat my:org-dir "issue/"))
 (defconst diary-dir (concat my:org-dir "diary/"))
@@ -836,12 +835,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-read-date
           org-update-statistics-cookies
           ladicle/task-clocked-time
-          chpn/insert-today-string
-          chpn/insert-timestamp-string
           ladicle/get-today-diary
           ladicle/get-yesterday-diary
-          ladicle/get-diary-from-cal
-          )
+          ladicle/get-diary-from-cal)
   :custom
   ;; files and directories
   (org-default-notes-file . note-file)
@@ -915,16 +911,16 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                               "* %?\n#+OPTIONS: toc:nil\n"
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("t" "task: 新規タスク" entry (file ,inbox-file)
-                              ,(concat "%[" my:capture-template-dir "inbox.org" "]")
+                              ,(concat "%[" user-emacs-directory "agenda-templates/inbox.org" "]")
                               :empty-lines 1 :jump-to-captured nil)
                              ("s" "schedule: スケジュール" entry (file ,inbox-file)
-                              ,(concat "%[" my:capture-template-dir "schedule.org" "]")
+                              ,(concat "%[" user-emacs-directory "agenda-templates/schedule.org" "]")
                               :empty-lines 1)
                              ("m" "memo: 新規文書" plain (file chpn/today-memo-string-with-mkdir)
-                              ,(concat "%[" my:capture-template-dir "memo.org" "]")
+                              ,(concat "%[" user-emacs-directory "agenda-templates/memo.org" "]")
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("i" "issue: 課題形成" plain (file chpn/today-issue-string)
-                              ,(concat "%[" my:capture-template-dir "issue.org" "]")
+                              ,(concat "%[" user-emacs-directory "agenda-templates/issue.org" "]")
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("l" "link: リンクを追加" item (clock)
                               "%A\n"
@@ -961,8 +957,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("C-c c" . org-capture)
   ("C-c a" . org-agenda)
   ("C-c l" . org-store-link)
-  ("C-+"   . (lambda () (interactive) (insert (chpn/insert-today-string))))
-  ("C-*"   . (lambda () (interactive) (insert (chpn/insert-timestamp-string))))
+  ("C-+"   . (lambda () (interactive) (insert (lambda () (format-time-string "%F" (current-time))))))
+  ("C-*"   . (lambda () (interactive) (insert (lambda () (format-time-string "%F %T" (current-time))))))
   (chpn-org-map
    ("i" . (lambda () (interactive) (org-agenda nil "i")))
    ("p" . (lambda () (interactive) (org-agenda nil "p")))
@@ -1012,8 +1008,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ;;                      (custom-set-variables '(org-agenda-start-on-weekday org-agenda-weekday-num))))
 
   :preface
-  (defun chpn/insert-today-string     () (format-time-string "%F"    (current-time)))
-  (defun chpn/insert-timestamp-string () (format-time-string "%F %T" (current-time)))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
            (dn (concat memo-dir (format-time-string "%F_" (current-time)) title))
