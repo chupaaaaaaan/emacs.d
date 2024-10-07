@@ -171,10 +171,10 @@
                           'treemacs-mode)
       (display-line-numbers-mode 0)))
   (defun disable-line-numbers-for-buffer-name-patterns ()
-   "Disable line numbers for buffers with names which match some patterns."
-   (dolist (pattern '("^\*.*\*$" "^CAPTURE-.*\.org$"))
-     (when (string-match-p pattern (buffer-name))
-       (display-line-numbers-mode 0)))))
+    "Disable line numbers for buffers with names which match some patterns."
+    (dolist (pattern '("^\*.*\*$" "^CAPTURE-.*\.org$"))
+      (when (string-match-p pattern (buffer-name))
+        (display-line-numbers-mode 0)))))
 
 (leaf cus-edit
   :custom
