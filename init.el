@@ -12,18 +12,63 @@
 
 
 (eval-and-compile
-  ;; directory
-  (defconst chpn/dir-jars "~/.jar/")
-  (unless (file-directory-p chpn/dir-jars)
-    (make-directory chpn/dir-jars t))
+  ;; Consts
+  (defconst chpn/dir-jars      "~/.local/jar/")
+  (defconst chpn/dir-pkg-elpa  "~/.local/elisp/elpa/")
+  (defconst chpn/dir-pkg-elget "~/.local/elisp/el-get/")
+  (defconst chpn/dir-pkg-local "~/.local/elisp/local/")
+
+  ;; Functions
+  (defun chpn/open-file (fname)
+    "Open FNAME and switch to the buffer non-interactively."
+    (switch-to-buffer (find-file-noselect fname)))
+
+  (defun chpn/copy-directory-recursively (src dest)
+    "Copy files that only exist in SRC directory to DEST recursively."
+    (unless (file-directory-p src)
+      (error "chpn/copy-directory-recursively: SRC must be a directory: %s" src))
+    (dolist (file (directory-files src nil "^[^.].*"))
+      (let* ((from-path (expand-file-name file src))
+             (to-path (expand-file-name file dest)))
+        (if (file-directory-p from-path)
+            (when (or (not (file-exists-p to-path)) (file-directory-p to-path))
+              (chpn/copy-directory-recursively from-path to-path))
+          (chpn/copy-file-if-not-exist from-path to-path)))))
+
+  (defun chpn/copy-file-if-not-exist (src dest)
+    "Copy SRC file to DEST.
+* When DEST exists and is a directory,
+  if no file with the same name as SRC exists in DEST, copy SRC to DEST.
+* When DEST does not exist and its name represents a directory,
+  make DEST directory and copy SRC to DEST.
+* When DEST does not exist and its name represents a file, copy SRC to DEST.
+* In cases other than the above, no copy will occur."
+    (unless (file-regular-p src)
+      (error "chpn/copy-file-if-not-exist: SRC must be a file: %s" src))
+    (if (file-exists-p dest)
+        (when (file-directory-p dest)
+          (let* ((file (file-name-nondirectory src))
+                 (dest-name (expand-file-name file dest)))
+            (unless (file-exists-p dest-name)
+              (copy-file src dest-name))))
+      (let ((parent-dir (file-name-directory dest)))
+        (unless (file-directory-p parent-dir)
+          (make-directory parent-dir t))
+        (copy-file src dest))))
+
   (defun chpn/from-dir-jars (jar-file) (expand-file-name jar-file chpn/dir-jars))
 
-  (defconst chpn/dir-pkg-elpa "~/.elisp/elpa/")
-  (defconst chpn/dir-pkg-elget "~/.elisp/el-get/")
-  (defconst chpn/dir-pkg-local  "~/.elisp/local/")
+  ;; Directory setup
+  (unless (file-directory-p chpn/dir-jars)
+    (make-directory chpn/dir-jars t))
   (unless (file-directory-p chpn/dir-pkg-local)
     (make-directory chpn/dir-pkg-local t))
-  (add-to-list 'load-path chpn/dir-pkg-local))
+
+  ;; Local settings
+  ;; "my:"から始まる設定はローカルで実施する設定
+  (chpn/copy-file-if-not-exist (concat user-emacs-directory "local-setting.el") chpn/dir-pkg-local)
+  (add-to-list 'load-path chpn/dir-pkg-local)
+  (require 'local-setting nil t))
 
 (eval-and-compile
   ;; HTTP_PROXY環境変数が存在している場合のみ、「scheme://」を削った文字列をプロキシとして設定する
@@ -306,11 +351,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (set-face-attribute 'default nil :family "Ricty ShinDiminished" :height 210)
   (set-fontset-font nil 'unicode (font-spec :family "Ricty ShinDiminished") nil 'append)
   (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono") nil 'append))
-
-;; Functions
-(defun chpn/open-file (fname)
-  "Open FNAME and switch to the buffer non-interactively."
-  (switch-to-buffer (find-file-noselect fname)))
 
 ;; locale and environment
 ;; (leaf *language-environment
@@ -1008,8 +1048,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (save-some-buffers t))
 
   :init
-  (unless (file-directory-p agenda-dir)
-    (copy-directory my:agenda-template-dir agenda-dir nil t t))
+  (chpn/copy-directory-recursively (concat user-emacs-directory "agenda-templates/") agenda-dir)
   :config
   (dolist (pattern `(,agenda-dir ,note-file))
     (add-to-list 'recentf-exclude pattern))
