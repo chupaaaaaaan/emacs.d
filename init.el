@@ -103,6 +103,7 @@
     (leaf blackout :ensure t)
     :config
     ;; initialize leaf-keywords.el
+    ;; TODO eval-and-compileに出る警告を解消する
     (leaf-keywords-init)))
 
 (leaf leaf
