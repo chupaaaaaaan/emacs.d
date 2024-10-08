@@ -333,25 +333,28 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf nerd-icons :ensure t :require t)
 
 (leaf font-setting
+  :defun chpn/set-font
   :if (display-graphic-p)
   :bind
   (chpn-function-map
    :package init
-   ("f" . chpn/choice-font-size))
+   ("f" . chpn/choice-font))
   :pre-setq
   (use-default-font-for-symbols . nil)
   (inhibit-compacting-font-caches . t)
   :init
-  (defun chpn/choice-font-size ()
+  (defun chpn/set-font (size)
     "set font size."
+    (set-face-attribute 'default nil :family "Ricty ShinDiminished" :height size)
+    (set-fontset-font nil 'unicode (font-spec :family "Ricty ShinDiminished") nil 'append)
+    (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono") nil 'append))
+  (defun chpn/choice-font ()
     (interactive)
     (let* ((candidates '(12 15 18 21 24 27))
            (selection (completing-read "Font size: " (mapcar 'number-to-string candidates)))
            (h (round (* (string-to-number selection) 10))))
-      (set-face-attribute 'default nil :height h)))
-  (set-face-attribute 'default nil :family "Ricty ShinDiminished" :height 210)
-  (set-fontset-font nil 'unicode (font-spec :family "Ricty ShinDiminished") nil 'append)
-  (set-fontset-font nil 'unicode (font-spec :family "Symbols Nerd Font Mono") nil 'append))
+      (chpn/set-font h)))
+  (chpn/set-font 180))
 
 ;; locale and environment
 ;; (leaf *language-environment
