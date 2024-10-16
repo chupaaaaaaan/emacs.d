@@ -859,7 +859,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-window-setup . 'current-window)
   (org-agenda-log-mode-items . '(clock))
   (org-agenda-tags-todo-honor-ignore-options . t)
-  (org-agenda-clockreport-parameter-plist . '(:maxlevel 5 :fileskip0 t :link t))
+  (org-agenda-clockreport-parameter-plist . '(:maxlevel 2 :fileskip0 t :link t :tags t))
   (org-agenda-start-on-weekday . 2)
   (org-agenda-custom-commands . `(("i" "Agenda: 予定表"
                                    ((agenda "" ((org-agenda-span 'day)))
@@ -895,7 +895,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   
   ;; clock/timer
   (org-clock-out-remove-zero-time-clocks . t)
-  (org-clock-clocktable-default-properties . '(:maxlevel 2 :scope agenda :wstart 2 :fileskip0 t :link t :tags nil :block thismonth))
+  (org-clock-clocktable-default-properties . '(:maxlevel 2 :scope agenda :wstart 2 :fileskip0 t :link t :tags t :block thismonth))
   (org-clock-clocked-in-display . 'mode-line) ;; 'frame-title
   (org-timer-default-timer . 30)
 
@@ -932,6 +932,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ;; tags
   (org-tag-alist . '((:startgroup . nil) ("requirement" . ?r) ("design" . ?d) ("implement" . ?i) ("test" . ?t) (:endgroup . nil)
                      (:startgroup . nil) ("comment" . ?c) (:endgroup . nil)))
+  (org-complete-tags-always-offer-all-agenda-tags . t)
 
   ;; property
   (org-global-properties . '(("Effort_ALL" . "0:05 0:15 0:30 1:00 1:30 2:00 2:30 3:00 4:00")))
