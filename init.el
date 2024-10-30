@@ -496,7 +496,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf hl-line
   :custom
-  (global-hl-line-mode . t)
+  (global-hl-line-mode . nil)
   :bind
   (chpn-toggle-map
    :package init
