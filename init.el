@@ -1276,8 +1276,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf company :ensure t
   :blackout t
-  :hook
-  (emacs-startup-hook . global-company-mode)
+  :hook (prog-mode-hook
+         text-mode-hook
+         emacs-lisp-mode-hook)
   :custom
   (company-idle-delay . 0)
   (company-echo-delay . 0)
@@ -1286,7 +1287,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :bind
   ("C-c y" . company-yasnippet)
   (company-active-map
-   ("<tab>" . company-complete)
+   ("<tab>" . nil)
    ("C-n" . company-select-next)
    ("C-p" . company-select-previous)
    ("C-s" . company-filter-candidates)
@@ -1305,10 +1306,29 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf company-box :ensure t
     :blackout t
     :hook
-    (global-company-mode-hook . company-box-mode)
+    (company-mode-hook . company-box-mode)
     :custom
-    (company-box-icons-alist . 'company-box-icons-all-the-icons)
+    (company-box-icons-alist . 'company-box-icons-images)
     (company-box-show-single-candidate . nil)))
+
+(leaf copilot
+  :el-get "copilot-emacs/copilot.el"
+  :defun (copilot-complete)
+  :hook
+  (prog-mode-hook . copilot-mode)
+  :bind
+  ("<tab>" . (lambda () (interactive) (or (copilot-complete) (indent-for-tab-command))))
+  (copilot-completion-map
+   ("<tab>"     . copilot-accept-completion) ;; Tab
+   ("C-<tab>"   . copilot-accept-completion-by-line) ;; Ctrl-Tab
+   ("<backtab>" . copilot-accept-completion-by-word) ;; Shift-Tab
+   ("M-n"       . copilot-next-completion)
+   ("M-p"       . copilot-previous-completion))
+  :custom
+  (copilot-indent-offset-warning-disable . t)
+  :config
+  (leaf editorconfig :ensure t)
+  (leaf jsonrpc :ensure t))
 
 ;; projectile
 (leaf projectile :ensure t
