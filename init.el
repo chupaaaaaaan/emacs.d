@@ -706,7 +706,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("M-s L" . consult-line-multi)
 
   ;;; Grep and Find
-  ("M-s g" . consult-grep)
+  ("M-s g" . consult-ripgrep)
   ("M-s G" . consult-git-grep)
   ("M-s d" . consult-find)
 
@@ -769,8 +769,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :bind
   (minibuffer-local-map
    ("M-A" . marginalia-cycle)))
-
-(leaf ag :ensure t)
 
 (leaf anzu :ensure t
   :blackout t
