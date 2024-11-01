@@ -1314,7 +1314,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
          text-mode-hook
          emacs-lisp-mode-hook)
   :bind
-  ("<tab>" . (lambda () (interactive) (or (copilot-complete) (indent-for-tab-command))))
   (copilot-completion-map
    ("<tab>"     . copilot-accept-completion) ;; Tab
    ("C-<tab>"   . copilot-accept-completion-by-line) ;; Ctrl-Tab
