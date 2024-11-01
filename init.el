@@ -1310,8 +1310,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf copilot
   :el-get "copilot-emacs/copilot.el"
   :defun (copilot-complete)
-  :hook
-  (prog-mode-hook . copilot-mode)
+  :hook (prog-mode-hook
+         text-mode-hook
+         emacs-lisp-mode-hook)
   :bind
   ("<tab>" . (lambda () (interactive) (or (copilot-complete) (indent-for-tab-command))))
   (copilot-completion-map
