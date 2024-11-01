@@ -218,13 +218,9 @@
   (line-number-mode 1)
   (column-number-mode 1))
 
-(leaf bookmark)
-
 (leaf mb-depth
   :custom
   (minibuffer-depth-indicate-mode . t))
-
-(leaf url-cookie)
 
 (leaf elec-pair
   :bind
