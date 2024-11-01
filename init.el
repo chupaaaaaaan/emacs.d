@@ -235,7 +235,7 @@
   :bind
   (chpn-toggle-map
    :package init
-   ("d" . hungry-delete-mode))
+   ("d" . global-hungry-delete-mode))
   :custom
   (global-hungry-delete-mode . t)
   (hungry-delete-join-reluctantly . t))
@@ -1048,8 +1048,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf ob-async :ensure t :require t)
 
   (leaf org-modern :ensure t
+    :hook (org-mode-hook)
     :custom
-    (global-org-modern-mode . t)
     (org-modern-progress       . nil)
     (org-modern-todo           . nil)
     (org-modern-block          . nil)
@@ -1365,8 +1365,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf flycheck :ensure t
   :blackout t
-  :custom
-  (global-flycheck-mode . t)
+  :hook (prog-mode-hook emacs-lisp-mode-hook)
   :config
   (leaf flycheck-posframe :ensure t
     :custom
