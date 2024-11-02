@@ -1333,6 +1333,82 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf editorconfig :ensure t)
   (leaf jsonrpc :ensure t))
 
+(leaf copilot-chat :ensure t
+  :hook
+  (git-commit-setup-hook . copilot-chat-insert-commit-message)
+  :custom
+  (copilot-chat-frontend . 'org)
+  (copilot-chat-prompt . "あなたは世界トップクラスのコーディング講師です。あなたのコードの説明は、高度な概念と詳細な情報を完璧なバランスで提供しています。あなたのアプローチにより、学生はコードの書き方を理解するだけでなく、効果的なプログラミングの指針となる基本原則も把握することができます。
+日本語で回答してください。
+名前を尋ねられたら、「GitHub Copilot」と答えてください。
+ユーザーの要件を慎重に、かつ正確に守ってください。
+あなたの専門知識は、ソフトウェア開発のトピックに厳密に限定されています。
+Microsoft のコンテンツポリシーに従ってください。
+著作権を侵害するコンテンツは避けてください。
+ソフトウェア開発に関連しない質問については、AIプログラミングアシスタントであることを単に思い出させるようにしてください。
+回答は短く、個人を特定しないようにしてください。
+回答にはMarkdownフォーマットを使用してください。
+Markdownコードブロックの先頭には、プログラミング言語名を必ず含めるようにしてください。
+回答全体を3重のバッククォートで囲むことは避けてください。
+ユーザーは Neovim と呼ばれる IDE を使用しており、この IDE には、開いているファイルを持つエディターの概念、統合されたユニットテストのサポート、コードの実行結果を表示する出力ペイン、統合されたターミナルが備わっています。
+アクティブなドキュメントとは、ユーザーが現在見ているソースコードのことです。
+各会話のターンでは、1つの回答のみを返すことができます。
+
+その他のルール
+段階的に考えてください。
+1. 提示されたコードの選択と、ユーザーの質問、関連エラー、プロジェクトの詳細、クラス定義などのその他のコンテキストを検証します。
+2. コード、コンセプト、またはユーザーの質問について不明な点がある場合は、明確化のための質問をします。
+3. ユーザーが具体的な質問またはエラーを提示している場合は、選択したコードとその他の提示されたコンテキストに基づいて回答します。 それ以外の場合は、選択したコードの説明に焦点を絞ります。
+4. コードの読みやすさやパフォーマンスなどを改善できる機会がある場合は、提案を行います。
+
+豊富な予備知識を前提とせずに、明確で、役立つ、かつ、徹底した説明を行うことに重点を置いてください。
+説明には、開発者にとってわかりやすい用語や例え話を使用してください。
+新しいユーザーが躓く可能性のある、コードのわかりにくい部分や注意すべき点を特定してください。
+提供された状況に即した、明確で適切な例を示してください。\n")
+  (copilot-chat-commit-prompt . "`git diff --cached` を実行した結果は次の通りです。 Conventional commit messageを日本語で提案してください。 これ以上の追加はしないでください。 以下にConventional Commitsについて説明します。
+コミットメッセージの前後にマーカーを挿入しないでください。
+
+# Conventional Commits 1.0.0
+
+## 概要
+
+Conventional Commits仕様は、コミットメッセージの上位にある軽量な規約です。
+これは、明確なコミット履歴を作成するための簡単なルールセットを提供します。
+これにより、その上に自動化ツールを簡単に作成できるようになります。
+この規約は、コミットメッセージで作成された機能、修正、および破壊的変更を記述することで、[SemVer](http://semver.org) と組み合わさります。
+
+コミットメッセージは、以下のように構造化されるべきです。
+
+---
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+---
+
+<br />
+コミットには、ライブラリの利用者に対して意図を伝えるための以下の構造要素を含めます。
+
+1. **fix:** _type_ が `fix` のコミットは、コードベースのバグを修正します（これはセマンティックバージョニングにおける [`PATCH`](http://semver.org/#summary) と関連します）。
+1. **feat:** _type_ が `feat` のコミットは、コードベースに新しい機能を導入します（これはセマンティックバージョニングにおける [`MINOR`](http://semver.org/#summary) と関連します）。
+1. **BREAKING CHANGE:** フッターが `BREAKING CHANGE:` となっているコミット、またはtype/scopeの後に `!` が追加されているコミットは、API の破壊的な変更を導入します（これはセマンティックバージョニングにおける [`MAJOR`](http://semver.org/#summary) と関連します）。 BREAKING CHANGEは、あらゆる _type_ のコミットの一部となる可能性があります。
+1. `fix:` および `feat:` 以外の _type_ も許可されています。例えば [@commitlint/config-conventional](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional) ( [Angular convention](https:// github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines)) では、`build:`, `chore:`, `ci:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, およびその他の推奨がされています。
+1. `BREAKING CHANGE: <description>` 以外の _footer_ を指定することもでき、[git trailer format](https://git-scm.com/docs/git-interpret-trailers) と同様の規約に従うことができます。
+
+追加の type は Conventional Commits仕様では必須とされておらず、また（「BREAKING CHANGE」を含まない限り）セマンティックバージョニングにおいても暗黙的な効果を持ちません。
+<br /><br />
+コミットの type には、追加の文脈情報を提供するための scope を括弧内に指定することができます。例えば、`feat(parser): アレイをパースする機能を追加` のようにです。
+
+
+以下は `git diff --cached` の結果です。\n")
+  (copilot-chat-prompt-doc . "以下のコードのドキュメントを日本語で書いてください。\n")
+  (copilot-chat-prompt-explain . "以下のコードについての説明を日本語で書いてください。\n")
+  (copilot-chat-prompt-fix . "このコードには問題があります。コードを修正して、バグが修正された状態で表示されるように書き直してください。\n")
+  (copilot-chat-prompt-optimize . "パフォーマンスと可読性を向上させるため、以下のコードを最適化してください。\n")
+  (copilot-chat-prompt-review . "以下のコードをレビューしてください。\n")
+  (copilot-chat-prompt-test . "以下のコードに対するテストを生成してください。\n"))
+
 ;; projectile
 (leaf projectile :ensure t
   :blackout t
