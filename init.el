@@ -1307,7 +1307,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf copilot
   :el-get "copilot-emacs/copilot.el"
-  :defun (copilot-complete)
+  :defvar (copilot-mode)
   :hook (prog-mode-hook
          text-mode-hook
          emacs-lisp-mode-hook)
@@ -1318,8 +1318,17 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("<backtab>" . copilot-accept-completion-by-word) ;; Shift-Tab
    ("M-n"       . copilot-next-completion)
    ("M-p"       . copilot-previous-completion))
+  (chpn-toggle-map
+   :package init
+   ("c" . toggle-copilot-mode))
   :custom
   (copilot-indent-offset-warning-disable . t)
+  :init
+  (defun toggle-copilot-mode ()
+    "Toggle GitHub Copilot mode."
+    (interactive)
+    (copilot-mode (if copilot-mode -1 1))
+    (message "Copilot mode %s" (if copilot-mode "enabled" "disabled")))
   :config
   (leaf editorconfig :ensure t)
   (leaf jsonrpc :ensure t))
