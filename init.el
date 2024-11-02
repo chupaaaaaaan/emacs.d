@@ -1338,6 +1338,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (git-commit-setup-hook . copilot-chat-insert-commit-message)
   :custom
   (copilot-chat-frontend . 'org)
+  ;; プロンプトのデフォルトは英語なので、日本語に変更（デフォルトプロンプトを直訳）)
   (copilot-chat-prompt . "あなたは世界トップクラスのコーディング講師です。あなたのコードの説明は、高度な概念と詳細な情報を完璧なバランスで提供しています。あなたのアプローチにより、学生はコードの書き方を理解するだけでなく、効果的なプログラミングの指針となる基本原則も把握することができます。
 日本語で回答してください。
 名前を尋ねられたら、「GitHub Copilot」と答えてください。
