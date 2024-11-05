@@ -15,7 +15,6 @@
   ;; Consts
   (defconst chpn/dir-jars      "~/.local/jar/")
   (defconst chpn/dir-pkg-elpa  "~/.local/elisp/elpa/")
-  (defconst chpn/dir-pkg-elget "~/.local/elisp/el-get/")
   (defconst chpn/dir-pkg-local "~/.local/elisp/local/")
 
   ;; Functions
@@ -95,9 +94,7 @@
     :init
     ;; optional packages if you want to use :hydra, :el-get, :blackout,,,
     (leaf hydra :ensure t)
-    (leaf el-get :ensure t
-      :custom
-      `(el-get-dir . ,chpn/dir-pkg-elget))
+    (leaf el-get :ensure t)
     (leaf blackout :ensure t)
     :config
     ;; initialize leaf-keywords.el
