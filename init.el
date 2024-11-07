@@ -1299,6 +1299,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (company-box-icons-alist . 'company-box-icons-images)
     (company-box-show-single-candidate . nil)))
 
+(leaf editorconfig :ensure t)
+
+(leaf jsonrpc :ensure t)
+
 (leaf copilot
   :el-get "copilot-emacs/copilot.el"
   :defvar (copilot-mode)
@@ -1322,10 +1326,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     "Toggle GitHub Copilot mode."
     (interactive)
     (copilot-mode (if copilot-mode -1 1))
-    (message "Copilot mode %s" (if copilot-mode "enabled" "disabled")))
-  :config
-  (leaf editorconfig :ensure t)
-  (leaf jsonrpc :ensure t))
+    (message "Copilot mode %s" (if copilot-mode "enabled" "disabled"))))
 
 (leaf copilot-chat :ensure t
   :hook
