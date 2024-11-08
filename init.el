@@ -55,10 +55,9 @@
   (defun chpn/from-dir-jars (jar-file) (expand-file-name jar-file chpn/dir-jars))
 
   ;; Directory setup
-  (unless (file-directory-p chpn/dir-jars)
-    (make-directory chpn/dir-jars t))
-  (unless (file-directory-p chpn/dir-pkg-local)
-    (make-directory chpn/dir-pkg-local t))
+  (dolist (dir (list chpn/dir-jars chpn/dir-pkg-local))
+    (unless (file-directory-p dir)
+      (make-directory dir t)))
 
   ;; Local settings
   ;; "my:"から始まる設定はローカルで実施する設定
