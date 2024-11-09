@@ -14,7 +14,7 @@
 (eval-and-compile
   ;; Consts
   (defconst chpn/dir-jars      "~/.local/jar/")
-  (defconst chpn/dir-pkg-local "~/.local/elisp/local/")
+  (defconst chpn/dir-pkg-local "~/.local/elisp/")
 
   ;; Functions
   (defun chpn/open-file (fname)
