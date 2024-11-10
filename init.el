@@ -475,9 +475,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (moody-replace-vc-mode)
   (moody-replace-eldoc-minibuffer-message-function))
 
-(leaf hide-mode-line :ensure t
-  :hook
-  (treemacs-mode-hook . hide-mode-line-mode))
+;; (leaf hide-mode-line :ensure t
+;;   :hook
+;;   (treemacs-mode-hook . hide-mode-line-mode))
 
 (leaf hl-line
   :custom
