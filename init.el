@@ -382,6 +382,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
   :config
   (leaf mozc-posframe
+    :disabled t
     :el-get (mozc-posframe :url "https://github.com/derui/mozc-posframe.git"
                            :checkout "54451af")
     :custom
