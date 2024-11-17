@@ -150,7 +150,7 @@
   `(gc-cons-threshold . ,(* 10 gc-cons-threshold))
   :hook
   (after-change-major-mode-hook . disable-line-numbers-for-specific-modes)
-  (buffer-list-update-hook . disable-line-numbers-for-buffer-name-patterns)
+  ;; (buffer-list-update-hook . disable-line-numbers-for-buffer-name-patterns)
   :preface
   (defun disable-line-numbers-for-specific-modes ()
     "Disable line numbers for specific modes."
