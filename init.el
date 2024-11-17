@@ -373,10 +373,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;; input method
 (leaf mozc :ensure t
   :if (eq system-type 'gnu/linux)
-  :bind
-  (minibuffer-local-map
-   ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
-   ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method)))))
   :bind*
   ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
   ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
