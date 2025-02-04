@@ -130,6 +130,8 @@
 (global-set-key (kbd "C-h")   'delete-backward-char)
 (global-set-key [f7] (lambda () (interactive) (chpn/open-file (concat user-emacs-directory "init.el"))))
 (global-set-key [f8] (lambda () (interactive) (switch-to-buffer "*scratch*")))
+(global-set-key (kbd "C-+") (lambda () (interactive) (insert (format-time-string "%F" (current-time)))))
+(global-set-key (kbd "C-*") (lambda () (interactive) (insert (format-time-string "%F %T" (current-time)))))
 
 (leaf cus-start
   :custom
@@ -937,8 +939,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("C-c c" . org-capture)
   ("C-c a" . org-agenda)
   ("C-c l" . org-store-link)
-  ("C-+"   . (lambda () (interactive) (insert (lambda () (format-time-string "%F" (current-time))))))
-  ("C-*"   . (lambda () (interactive) (insert (lambda () (format-time-string "%F %T" (current-time))))))
   (chpn-org-map
    ("i" . (lambda () (interactive) (org-agenda nil "i")))
    ("p" . (lambda () (interactive) (org-agenda nil "p")))
