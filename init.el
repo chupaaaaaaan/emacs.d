@@ -560,9 +560,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (modus-themes-bold-constructs . nil)
   (modus-themes-hl-line . '(underline accented))
   (modus-themes-region . '(bg-only no-extend))
-  ;; (modus-themes-to-toggle . '(modus-operandi-tinted modus-vivendi-tinted))
-  ;; :bind
-  ;; ("<f5>" . modus-themes-toggle)
+  (modus-themes-to-toggle . '(modus-operandi-tinted modus-vivendi-tinted))
+  :bind
+  ("<f5>" . modus-themes-toggle)
   :config
   (load-theme 'modus-vivendi-tinted t))
 
@@ -1296,8 +1296,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf jsonrpc :ensure t)
 
-(leaf copilot
-  :el-get "copilot-emacs/copilot.el"
+(leaf copilot :ensure t
   :defvar (copilot-mode)
   :hook (prog-mode-hook
          text-mode-hook
