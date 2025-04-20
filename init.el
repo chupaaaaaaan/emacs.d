@@ -114,14 +114,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; define prefix-key
-(define-prefix-command 'chpn-function-map)
-(define-key global-map (kbd "M-i") 'chpn-function-map)
+(define-prefix-command 'chpn-function-prefix)
+(define-key global-map (kbd "M-i") 'chpn-function-prefix)
 
-(define-prefix-command 'chpn-toggle-map)
-(define-key global-map (kbd "M-t") 'chpn-toggle-map)
-
-(define-prefix-command 'chpn-org-map)
-(define-key global-map (kbd "M-q") 'chpn-org-map)
+(define-prefix-command 'chpn-toggle-prefix)
+(define-key global-map (kbd "M-t") 'chpn-toggle-prefix)
 
 (global-unset-key (kbd "C-x C-c"))
 (defalias 'exit 'save-buffers-kill-emacs)
@@ -204,7 +201,7 @@
   :bind
   ("C-," . previous-error)
   ("C-." . next-error)
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("l" . toggle-truncate-lines))
   :config
@@ -217,7 +214,7 @@
 
 (leaf elec-pair
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("e" . electric-pair-local-mode))
   :custom
@@ -226,7 +223,7 @@
 (leaf hungry-delete :ensure t
   :blackout t
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("d" . global-hungry-delete-mode))
   :custom
@@ -325,7 +322,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :defun chpn/set-font
   :if (display-graphic-p)
   :bind
-  (chpn-function-map
+  (chpn-function-prefix
    :package init
    ("f" . chpn/choice-font))
   :pre-setq
@@ -405,7 +402,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf golden-ratio :ensure t
   :blackout t
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("g" . golden-ratio-mode))
   :custom
@@ -429,7 +426,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf follow
   :defvar (follow-mode)
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("f" . toggle-follow-mode))
   :preface
@@ -481,7 +478,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   (global-hl-line-mode . nil)
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("h" . global-hl-line-mode)))
 
@@ -497,7 +494,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (show-paren-when-point-inside-paren . t)
   (show-paren-when-point-in-periphery . t)
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("p" . toggle-show-paren))
   :preface
@@ -515,7 +512,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :blackout t
   :defvar highlight-indent-guides-mode
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("i" . toggle-highlight-indent-guides))
   :hook
@@ -624,7 +621,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf scroll-lock
   :require t
   :bind
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("m" . scroll-lock-mode)))
 
@@ -777,7 +774,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   (gt-langs . '(en ja))
   :bind
-  (chpn-function-map
+  (chpn-function-prefix
    :package init
    ("t" . gt-do-translate))
   :config
@@ -939,7 +936,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("C-c c" . org-capture)
   ("C-c a" . org-agenda)
   ("C-c l" . org-store-link)
-  (chpn-org-map
+  ("M-q"   . chpn-org-prefix)
+  (chpn-org-prefix
    ("i" . (lambda () (interactive) (org-agenda nil "i")))
    ("p" . (lambda () (interactive) (org-agenda nil "p")))
    ("t" . (lambda () (interactive) (chpn/open-file (ladicle/get-today-diary))))
@@ -988,6 +986,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ;;                      (custom-set-variables '(org-agenda-start-on-weekday org-agenda-weekday-num))))
 
   :preface
+  (define-prefix-command 'chpn-org-prefix)
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
            (dn (concat memo-dir (format-time-string "%F_" (current-time)) title))
@@ -1221,7 +1220,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf git-modes :ensure t)
   (leaf git-timemachine :ensure t
     :bind
-    (chpn-function-map
+    (chpn-function-prefix
      :package init
      ("q" . git-timemachine-toggle)))
   (leaf magit :ensure t
@@ -1308,7 +1307,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("<backtab>" . copilot-accept-completion-by-word) ;; Shift-Tab
    ("M-n"       . copilot-next-completion)
    ("M-p"       . copilot-previous-completion))
-  (chpn-toggle-map
+  (chpn-toggle-prefix
    :package init
    ("c" . toggle-copilot-mode))
   :custom
