@@ -24,3 +24,5 @@ eln-cache/
 tree-sitter/
 el-get/
 elpa/
+.org-id-locations
+org-roam.db
