@@ -1409,10 +1409,12 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
   (projectile-mode . t))
 
 (leaf treemacs :ensure t
+  :defun (treemacs-load-theme
+          chpn/treemacs-record-previous-window)
   :bind
   ("M-1" . treemacs-select-window)
   (treemacs-mode-map
-   ("M-1" . previous-window-any-frame))
+   ("M-1" . chpn/treemacs-restore-previous-window))
   :custom
   (treemacs-is-never-other-window . t)
   (treemacs-no-delete-other-windows . t)
@@ -1422,6 +1424,18 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
   (treemacs-fringe-indicator-mode . t)
   (treemacs-git-mode . 'simple)
   (treemacs-project-follow-cleanup . t)
+  :preface
+  (defvar chpn/treemacs-previous-window nil)
+  (defun chpn/treemacs-record-previous-window (&rest _)
+    "Treemacs ウインドウに切り替える前のウインドウを記録する。"
+    (setq chpn/treemacs-previous-window (selected-window)))
+  (advice-add 'treemacs-select-window :before #'chpn/treemacs-record-previous-window)
+  (defun chpn/treemacs-restore-previous-window ()
+    "記録しておいたウインドウ（Treemacs 移動前）にフォーカスを戻す。"
+    (interactive)
+    (if (window-live-p chpn/treemacs-previous-window)
+        (select-window chpn/treemacs-previous-window)
+      (message "Previous window not found.")))
   :config
   (leaf treemacs-projectile :ensure t
     :bind
