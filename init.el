@@ -794,6 +794,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                          map)))
 
 (leaf plz :ensure t)
+(leaf emacsql :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
@@ -801,6 +802,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (defconst memo-dir (concat my:org-dir "memo/"))
 (defconst issue-dir (concat my:org-dir "issue/"))
 (defconst diary-dir (concat my:org-dir "diary/"))
+(defconst roam-dir (concat my:org-dir "roam/"))
 (defconst agenda-dir (concat my:org-dir "agenda/"))
 (defconst note-file (concat my:org-dir "notes.org"))
 (defconst inbox-file (concat agenda-dir "inbox.org"))
@@ -1098,6 +1100,25 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     ;; (org-pomodoro-killed-hook               . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroをkillしたよ！またよろしくね")))
     )
 
+  (leaf org-roam :ensure t
+    :custom
+    (org-roam-directory . roam-dir)
+    (org-roam-db-autosync-mode . t)
+    (org-roam-completion-everywhere . t)
+    :bind
+    (chpn-org-prefix
+     ("n" . chpn-roam-prefix))
+    (chpn-roam-prefix
+     ("f" . org-roam-node-find)
+     ("i" . org-roam-node-insert)
+     ("c" . org-roam-capture)
+     ("r" . org-roam-ref-add)
+     ("a" . org-roam-alias-add)
+     ("b" . org-roam-buffer-toggle))
+    :preface
+    (define-prefix-command 'chpn-roam-prefix)
+    (unless (file-directory-p roam-dir) (make-directory roam-dir t)))
+
   (leaf org-re-reveal :ensure t)
   (leaf company-org-block :ensure t))
 
@@ -1227,7 +1248,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     :custom
     (magit-auto-revert-mode . nil)
     :config
-    (leaf magit-file-icons :ensure t))
+    (leaf magit-file-icons :ensure t)
+    (leaf magit-section :ensure t))
   (leaf git-gutter :ensure t
     :blackout t
     :bind
