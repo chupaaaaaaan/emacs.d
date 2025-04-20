@@ -1543,7 +1543,9 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
   :bind
   (haskell-mode-map
    ("C-c C-h" . haskell-compile)
-   ("C-c ?" . hoogle)))
+   ("C-c ?" . consult-hoogle))
+  :config
+  (leaf consult-hoogle :ensure t))
 
 (leaf restclient :ensure t
   :config
