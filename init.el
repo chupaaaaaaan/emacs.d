@@ -1431,7 +1431,10 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
   (leaf treemacs-icons-dired :ensure t
     :config
     (treemacs-icons-dired-mode))
-  (leaf treemacs-magit :ensure t :require t))
+  (leaf treemacs-magit :ensure t :require t)
+  (leaf treemacs-nerd-icons :ensure t
+    :config
+    (treemacs-load-theme "nerd-icons")))
 
 (leaf flycheck :ensure t
   :blackout t
