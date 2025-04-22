@@ -760,12 +760,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (anzu-search-threshold . 1000))
 
 (leaf go-translate :ensure t
-  ;; :if (file-exists-p (concat chpn/dir-pkg-local "deepl-secret.el"))
-  ;; :require (deepl-secret)
   :defvar (gt-default-translator
            gt-prompt-map
-           gt-posframe-pop-render-timeout
-           my:deepl-secret)
+           gt-posframe-pop-render-timeout)
   :defun (gt-translator
           gt-taker
           gt-google-engine
