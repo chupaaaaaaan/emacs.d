@@ -796,16 +796,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defconst memo-dir (concat my:org-dir "memo/"))
-(defconst issue-dir (concat my:org-dir "issue/"))
-(defconst diary-dir (concat my:org-dir "diary/"))
-(defconst roam-dir (concat my:org-dir "roam/"))
-(defconst agenda-dir (concat my:org-dir "agenda/"))
-(defconst note-file (concat my:org-dir "notes.org"))
-(defconst inbox-file (concat agenda-dir "inbox.org"))
-(defconst archive-file (concat agenda-dir "archive/archive_%s::"))
 (leaf org :ensure t
-  :defvar (org-mode-line-string
+  :defvar (org-directory
+           org-mode-line-string
+           org-agenda-files
            org-default-notes-file
            org-clock-effort
            recentf-exclude)
@@ -814,14 +808,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-duration-to-minutes
           org-read-date
           org-update-statistics-cookies
-          ladicle/task-clocked-time
-          ladicle/get-today-diary
-          ladicle/get-yesterday-diary
-          ladicle/get-diary-from-cal)
+          ladicle/task-clocked-time)
   :custom
   ;; files and directories
-  (org-default-notes-file . note-file)
-  (org-agenda-files . `(,agenda-dir ,note-file))
+  `(org-directory . ,my:org-dir)
+  (org-default-notes-file . "notes.org")
+  (org-agenda-files . `(,(concat org-directory "agenda/") "notes.org"))
 
   ;; view style
   (org-startup-indented . t)
@@ -884,20 +876,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ;; (org-priority-start-cycle-with-default . nil)
 
   ;; capture
-  (org-capture-templates . `(("d" "diary: 日々の記録" entry (file+headline ladicle/get-today-diary "Diary")
-                              "* %?\n#+OPTIONS: toc:nil\n"
-                              :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
-                             ("t" "task: 新規タスク" entry (file ,inbox-file)
+  (org-capture-templates . `(("t" "task: 新規タスク" entry (file "agenda/inbox.org")
                               ,(concat "%[" user-emacs-directory "capture-templates/inbox.org]")
                               :empty-lines 1 :jump-to-captured nil)
-                             ("s" "schedule: スケジュール" entry (file ,inbox-file)
+                             ("s" "schedule: スケジュール" entry (file "agenda/inbox.org")
                               ,(concat "%[" user-emacs-directory "capture-templates/schedule.org]")
                               :empty-lines 1)
-                             ("m" "memo: 新規文書" plain (file chpn/today-memo-string-with-mkdir)
+                             ("m" "memo: 新規メモ" plain (file chpn/today-memo-string-with-mkdir)
                               ,(concat "%[" user-emacs-directory "capture-templates/memo.org]")
-                              :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
-                             ("i" "issue: 課題形成" plain (file chpn/today-issue-string)
-                              ,(concat "%[" user-emacs-directory "capture-templates/issue.org]")
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("l" "link: リンクを追加" item (clock)
                               "%A\n"
@@ -916,7 +902,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-columns-default-format . "%40ITEM %TODO %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
 
   ;; ;; archive
-  (org-archive-location . archive-file)
+  (org-archive-location . "archive/archive_%s::")
 
   ;; source code
   ;; org-src-lang-modes は、言語名とメジャーモード名が一致していれば設定不要っぽい
@@ -939,10 +925,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (chpn-org-prefix
    ("i" . (lambda () (interactive) (org-agenda nil "i")))
    ("p" . (lambda () (interactive) (org-agenda nil "p")))
-   ("t" . (lambda () (interactive) (chpn/open-file (ladicle/get-today-diary))))
-   ("y" . (lambda () (interactive) (chpn/open-file (ladicle/get-yesterday-diary))))
-   ("c" . (lambda () (interactive) (chpn/open-file (ladicle/get-diary-from-cal))))
-   ("m" . (lambda () (interactive) (chpn/open-file (consult-find memo-dir "\.org#")))))
+   ("m" . (lambda () (interactive) (chpn/open-file (consult-find (concat org-directory "memo/") "\.org#")))))
   (org-mode-map
    ;; ("C-c i" . org-clock-in)
    ;; ("C-c o" . org-clock-out)
@@ -988,17 +971,13 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (define-prefix-command 'chpn-org-prefix)
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
-           (dn (concat memo-dir (format-time-string "%F_" (current-time)) title))
+           (dn (concat org-directory "memo/" (format-time-string "%F_" (current-time)) title))
            (kr (cons title kill-ring)))
       (setq kill-ring (delete-dups kr))
       (setq kill-ring-yank-pointer kill-ring)
       (unless (file-directory-p dn)
         (make-directory dn))
       (concat dn "/index.org")))
-  (defun chpn/today-issue-string      () (concat issue-dir (format-time-string "%F_" (current-time)) (read-string "issue title: ") ".org"))
-  (defun ladicle/get-today-diary      () (concat diary-dir (format-time-string "%F.org" (current-time))))
-  (defun ladicle/get-yesterday-diary  () (concat diary-dir (format-time-string "%F.org" (time-add (current-time) (* -24 3600)))))
-  (defun ladicle/get-diary-from-cal   () (concat diary-dir (format-time-string "%F.org" (apply 'encode-time (parse-time-string (concat (org-read-date) " 00:00"))))))
   (defun ladicle/task-clocked-time ()
     "Return a string with the clocked time and effort, if any"
     (interactive)
@@ -1014,16 +993,15 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                  (effort-str (format "%d:%02d" effort-h effort-m)))
             (format " %s/%s" work-done-str effort-str))
         (format " %s" work-done-str))))
-
   (defun ladicle/org-clock-out-and-save-when-exit ()
     "Save buffers and stop clocking when kill emacs."
     (ignore-errors (org-clock-out) t)
     (save-some-buffers t))
 
   :init
-  (chpn/copy-directory-recursively (concat user-emacs-directory "agenda-templates/") agenda-dir)
+  (chpn/copy-directory-recursively (concat user-emacs-directory "agenda-templates/") (concat org-directory "agenda/"))
   :config
-  (dolist (pattern `(,agenda-dir ,note-file))
+  (dolist (pattern org-agenda-files)
     (add-to-list 'recentf-exclude pattern))
   (leaf ob-async :ensure t :require t)
 
@@ -1098,23 +1076,40 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     )
 
   (leaf org-roam :ensure t
+    :defvar (org-directory
+             org-roam-directory)
     :custom
     (org-roam-directory . roam-dir)
     (org-roam-db-autosync-mode . t)
     (org-roam-completion-everywhere . t)
+    (org-roam-capture-templates . '(("f" "Fleeting" plain "%?"
+                                     :target (file+head "fleet/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :unnarrowed t)
+                                    ("b" "Bibliography" plain "%?"
+                                     :target (file+head "biblio/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :unnarrowed t)
+                                    ("p" "Permanent" plain "%?"
+                                     :target (file+head "permanent/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :unnarrowed t)
+                                    ("s" "Structure" plain "%?"
+                                     :target (file+head "permanent/structure-%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :unnarrowed t)))
     :bind
-    (chpn-org-prefix
-     ("n" . chpn-roam-prefix))
+    ("C-c o" . chpn-roam-prefix)
     (chpn-roam-prefix
+     ("a" . org-roam-alias-add)
+     ("b" . org-roam-buffer-toggle)
+     ("c" . org-roam-capture)
      ("f" . org-roam-node-find)
      ("i" . org-roam-node-insert)
-     ("c" . org-roam-capture)
-     ("r" . org-roam-ref-add)
-     ("a" . org-roam-alias-add)
-     ("b" . org-roam-buffer-toggle))
+     ("r" . org-roam-ref-add))
     :preface
     (define-prefix-command 'chpn-roam-prefix)
-    (unless (file-directory-p roam-dir) (make-directory roam-dir t)))
+    (defconst roam-dir (concat org-directory "roam/"))
+    (unless (file-directory-p roam-dir) (make-directory roam-dir t))
+    :config
+    (dolist (dir (mapcar (lambda (x) (concat org-roam-directory x)) '("biblio" "fleet" "permanent")))
+      (unless (file-directory-p dir) (make-directory dir t))))
 
   (leaf org-re-reveal :ensure t)
   (leaf company-org-block :ensure t))
