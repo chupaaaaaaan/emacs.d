@@ -712,6 +712,13 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :hook
   (completion-list-mode-hook . consult-preview-at-point-mode))
 
+(leaf isearch-mb :ensure t
+  :bind
+  ("C-s" . isearch-forward-regexp)
+  ("C-r" . isearch-backward-regexp)
+  :custom
+  (isearch-mb-mode . t))
+
 (leaf consult-ghq :ensure t
   :bind
   ;; ("M-s c s" . consult-ghq-switch-project)
