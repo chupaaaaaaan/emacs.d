@@ -760,7 +760,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf anzu :ensure t
   :blackout t
   :bind
-  ("C-r" . anzu-query-replace-regexp)
+  ("M-r" . anzu-query-replace-regexp)
   :custom
   (global-anzu-mode . t)
   (anzu-deactivate-region . t)
