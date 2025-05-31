@@ -1541,30 +1541,6 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
     ("M-2" . lsp-treemacs-symbols)
     :custom
     (lsp-treemacs-sync-mode . t))
-  (leaf dap-mode :ensure t
-    :config
-    (dap-auto-configure-mode)
-    (leaf dap-chrome :require t)))
-
-(leaf lsp-java :ensure t
-  :custom
-  (lsp-java-vmargs . `("-XX:+UseParallelGC"
-                       "-XX:GCTimeRatio=4"
-                       "-XX:AdaptiveSizePolicyWeight=90"
-                       "-Dsun.zip.disableMemoryMapping=true"
-                       ;; ,(concat "-javaagent:" (chpn/from-dir-jars "lombok.jar"))
-                       ;; ,(concat "-Xbootclasspath/a:" (chpn/from-dir-jars "lombok.jar"))
-                       ;; "-noverify"
-                       ;; "-XX:+UseG1GC"
-                       ;; "-XX:+UseStringDeduplication"
-                       "-Xmx1G"
-                       "-Xms100m"))
-  (lsp-java-configuration-maven-user-settings . "~/.m2/settings.xml")
-  (lsp-java-import-maven-enabled . t)
-  (lsp-java-maven-download-sources . t)
-  (lsp-java-maven-update-snapshots . t)
-  :config
-  (leaf dap-java :require t))
 
 (leaf lsp-haskell :ensure t
   :custom
