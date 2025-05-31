@@ -1535,12 +1535,7 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
     (lsp-ui-sideline-show-symbol . t)
     (lsp-ui-sideline-show-hover . t)
     (lsp-ui-sideline-show-diagnostics . nil)
-    (lsp-ui-sideline-show-code-actions . t))
-  (leaf lsp-treemacs :ensure t
-    :bind
-    ("M-2" . lsp-treemacs-symbols)
-    :custom
-    (lsp-treemacs-sync-mode . t))
+    (lsp-ui-sideline-show-code-actions . t)))
 
 (leaf lsp-haskell :ensure t
   :custom
