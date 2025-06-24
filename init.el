@@ -35,8 +35,10 @@
 
   (defun chpn/copy-file-if-not-exist (src dest)
     "Copy SRC file to DEST.
-- When DEST exists and is a directory, if no file with the same name as SRC exists in DEST, copy SRC to DEST.
-- When DEST does not exist and its name represents a directory, make DEST directory and copy SRC to DEST.
+- When DEST exists and is a directory,
+  if no file with the same name as SRC exists in DEST, copy SRC to DEST.
+- When DEST does not exist and its name represents a directory,
+  make DEST directory and copy SRC to DEST.
 - When DEST does not exist and its name represents a file, copy SRC to DEST.
 - In cases other than the above, no copy will occur."
     (unless (file-regular-p src)
