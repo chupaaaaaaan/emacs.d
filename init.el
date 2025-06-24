@@ -377,6 +377,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf mozc-posframe
     :vc (;; original repository: derui/mozc-posframe
          ;; 最新版ではうまく動かない（原因は調べていない）ため、forkしたうえで動作するリビジョンを取得
+         ;; なお`:branch'プロパティにはブランチ名・タグ名のみ指定可能 (内部的に `git clone --branch' を実行しているため)
          :url "https://github.com/chupaaaaaaan/mozc-posframe.git"
          :branch "version-my-using")
     :require t
