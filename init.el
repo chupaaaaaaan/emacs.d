@@ -90,13 +90,9 @@
 
   (leaf leaf-keywords :ensure t
     :init
-    ;; optional packages if you want to use :hydra, :el-get, :blackout,,,
     (leaf hydra :ensure t)
-    (leaf el-get :ensure t)
     (leaf blackout :ensure t)
     :config
-    ;; initialize leaf-keywords.el
-    ;; TODO eval-and-compileに出る警告を解消する
     (leaf-keywords-init)))
 
 (leaf leaf
@@ -379,7 +375,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
   :config
   (leaf mozc-posframe
-    :el-get (mozc-posframe :url "https://github.com/derui/mozc-posframe.git" :checkout "54451af")
+    :vc (;; original repository: derui/mozc-posframe
+         ;; 最新版ではうまく動かない（原因は調べていない）ため、forkしたうえで動作するリビジョンを取得
+         :url "https://github.com/chupaaaaaaan/mozc-posframe.git"
+         :branch "version-my-using")
     :require t
     :custom
     (mozc-candidate-style . 'posframe)))
