@@ -1096,12 +1096,15 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                      :unnarrowed t)
                                     ("b" "Bibliography" plain "%?"
                                      :target (file+head "biblio/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :jump-to-captured t
                                      :unnarrowed t)
                                     ("p" "Permanent" plain "%?"
                                      :target (file+head "permanent/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :jump-to-captured t
                                      :unnarrowed t)
                                     ("s" "Structure" plain "%?"
                                      :target (file+head "permanent/structure-%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :jump-to-captured t
                                      :unnarrowed t)))
     :bind
     ("C-c o" . chpn-roam-prefix)
