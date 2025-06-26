@@ -1094,6 +1094,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (org-roam-capture-templates . '(("f" "Fleeting" plain "%?"
                                      :target (file+head "fleet/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                                      :unnarrowed t)
+                                    ("k" "Competitive Programming" plain "%?"
+                                     :target (file+head "kyopro/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                     :jump-to-captured t
+                                     :unnarrowed t)
                                     ("b" "Bibliography" plain "%?"
                                      :target (file+head "biblio/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                                      :jump-to-captured t
@@ -1120,7 +1124,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (defconst roam-dir (concat org-directory "roam/"))
     (unless (file-directory-p roam-dir) (make-directory roam-dir t))
     :config
-    (dolist (dir (mapcar (lambda (x) (concat org-roam-directory x)) '("biblio" "fleet" "permanent")))
+    (dolist (dir (mapcar (lambda (x) (concat org-roam-directory x)) '("fleet" "kyopro" "biblio" "fleet" "permanent")))
       (unless (file-directory-p dir) (make-directory dir t))))
 
   (leaf org-re-reveal :ensure t)
