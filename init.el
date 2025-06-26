@@ -1127,8 +1127,66 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (dolist (dir (mapcar (lambda (x) (concat org-roam-directory x)) '("fleet" "kyopro" "biblio" "fleet" "permanent")))
       (unless (file-directory-p dir) (make-directory dir t))))
 
+  (leaf org-journal :ensure t
+    :defvar (org-journal-file-type
+             org-capture-templates
+             chpn/org-journal-insert-template)
+    :bind
+    ("C-c j" . org-journal-new-entry)
+    :custom
+    (org-journal-dir . journal-dir)
+    (org-journal-date-format . date-format-jp)
+    (org-journal-search-result-date-format . date-format-jp)
+    (org-journal-time-prefix . "*** ")
+    :hook
+    (org-journal-after-header-create-hook . chpn/org-journal-insert-template )
+    :preface
+    (defconst journal-dir (concat org-directory "journal/"))
+    (defconst date-format-jp "%x（%a）")
+    (unless (file-directory-p journal-dir) (make-directory journal-dir t))
+    (defun chpn/org-journal-insert-template ()
+      (insert "\n")
+      (goto-char (point-max))
+      (insert-file-contents (concat user-emacs-directory "templates/org-journal/daily-reflection.org"))
+      (goto-char (point-max))))
+
   (leaf org-re-reveal :ensure t)
   (leaf company-org-block :ensure t))
+
+(leaf calendar
+  :defvar (calendar-holidays
+           japanese-holidays)
+  :defun (calendar-cursor-to-date
+          calendar-date-string
+          calendar-check-holidays)
+  :require japanese-holidays
+  :bind
+  ("M-2" . calendar)
+  :custom
+  (calendar-mark-holidays-flag . t)
+  (calendar-day-header-array . dow-array-jp)
+  (calendar-day-name-array . dow-array-jp)
+  (calendar-date-display-form . '((format "%s年 %s月 %s日（%s）" year month day dayname)))
+  (calendar-month-header . '(propertize (format "%d年 %s月" year month)
+                                        'font-lock-face 'calendar-month-header))
+  :hook
+  (calendar-move-hook . chpn/japanese-holiday-show)
+  (calendar-today-visible-hook . japanese-holiday-mark-weekend)
+  (calendar-today-invisible-hook . japanese-holiday-mark-weekend)
+  (calendar-today-visible-hook . calendar-mark-today)
+  :preface
+  (defconst dow-array-jp ["日" "月" "火" "水" "木" "金" "土"])
+  (defun chpn/japanese-holiday-show (&rest _args)
+    (let* ((date (calendar-cursor-to-date t))
+           (date-string (calendar-date-string date))
+           (holiday-list (calendar-check-holidays date)))
+      (when holiday-list
+        (message "%s: %s" date-string (mapconcat #'identity holiday-list "; ")))))
+  :init
+  (leaf japanese-holidays :ensure t)
+  :config
+  (setq calendar-holidays
+        (append japanese-holidays holiday-local-holidays holiday-other-holidays)))
 
 ;; latex
 (leaf ox-latex
