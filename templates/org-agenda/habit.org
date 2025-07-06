@@ -1,5 +1,0 @@
-#+CATEGORY: work
-#+FILETAGS: HABIT
-#+PROPERTY STYLE="habit"
-* TODO 習慣タスク
-  SCHEDULED: <2020-01-01 水 .+1d>

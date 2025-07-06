@@ -574,9 +574,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (dashboard-set-heading-icons . t)
   (dashboard-set-file-icons . t)
   (dashboard-items . '((recents   . 7)
-                       (bookmarks . 15)
-                       (registers . 5)
-                       (projects  . 5)))
+                       (agenda    . 7)
+                       (bookmarks . 15)))
   :bind
   ("<f6>" . dashboard-open)
   :config
@@ -626,14 +625,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (chpn-toggle-prefix
    :package init
    ("m" . scroll-lock-mode)))
-
-;; ediff
-;; (when (executable-find "diff")
-;;   (require 'ediff nil t)
-;;   (setq-default ediff-window-setup-function 'ediff-setup-windows-plain)
-;;   (setq-default ediff-split-window-function 'split-window-horizontally)
-;;   (global-set-key (kbd "C-c d") 'ediff-files)
-;;   )
 
 (leaf undo-tree :ensure t
   :blackout t
@@ -812,10 +803,16 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
            org-default-notes-file
            org-clock-effort
            recentf-exclude)
-  :defun (org-clock-get-clocked-time
+  :defun (org-back-to-heading
+          org-clock-get-clocked-time
           org-clock-out
+          org-clocking-p
           org-duration-to-minutes
+          org-end-of-subtree
+          org-entry-end-position
+          org-get-tags
           org-read-date
+          org-todo
           org-update-statistics-cookies
           ladicle/task-clocked-time)
   :custom
@@ -838,31 +835,54 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-log-mode-items . '(clock))
   (org-agenda-tags-todo-honor-ignore-options . t)
   (org-agenda-clockreport-parameter-plist . '(:maxlevel 2 :fileskip0 t :link t :tags t))
-  (org-agenda-start-on-weekday . 2)
-  (org-agenda-custom-commands . `(("i" "Agenda: 予定表"
-                                   ((agenda "" ((org-agenda-span 'day)))
-                                    (tags-todo "-INBOX+HABIT" ((org-agenda-overriding-header "Habit")
-                                                               (org-agenda-sorting-strategy '(category-keep)))) nil))
-                                  ("p" "Tasks: タスク"
-                                   ((agenda "" ((org-agenda-span 'week)))
-                                    (tags-todo "-INBOX-HABIT/-REFR-SOME-DONE-CANCELED"
+  (org-agenda-start-on-weekday . 0)
+  (org-agenda-skip-deadline-if-done . t)
+  (org-agenda-skip-scheduled-if-done . t)
+  (org-agenda-skip-scheduled-if-deadline-is-shown . 'not-today)
+  (org-agenda-skip-scheduled-delay-if-deadline . 'post-deadline)
+  (org-agenda-use-time-grid . nil)
+  (org-agenda-breadcrumbs-separator . " » ")
+  (org-agenda-format-date . (lambda (date)
+                              (format-time-string "%x（%a）" (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))))
+  (org-agenda-custom-commands . `(("i" "Agenda"
+                                   ((agenda "" ((org-agenda-span 'day)
+                                                (org-agenda-prefix-format " %i %-12:c%?-12t% s %.48b")
+                                                (org-agenda-skip-function
+                                                 '(chpn/org-agenda-skip-if-tags '("START" "FINISH" "PROJECT") t))))
+                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
-                                                (org-tags-match-list-sublevels 'indented)
+                                                (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
+                                                (org-agenda-sorting-strategy '(priority-down))))
+                                    (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
+                                               ((org-agenda-overriding-header "Projects")
+                                                (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-sorting-strategy '(priority-down scheduled-up))))
                                     (tags-todo "+INBOX"
                                                ((org-agenda-overriding-header "Inbox")
                                                 (org-agenda-todo-ignore-scheduled nil)
-                                                (org-tags-match-list-sublevels nil))) nil))))
+                                                (org-tags-match-list-sublevels nil))) nil))
+                                  ("s" "Start of Day"
+                                   ((agenda "" ((org-agenda-overriding-header "Start of Day")
+                                                (org-agenda-skip-function
+                                                 '(chpn/org-agenda-skip-if-notags '("START") t))))
+                                    (tags-todo "+INBOX"
+                                               ((org-agenda-overriding-header "Inbox")
+                                                (org-agenda-todo-ignore-scheduled nil)
+                                                (org-tags-match-list-sublevels nil)))
+                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DONE-CANCELED"
+                                               ((org-agenda-overriding-header "Tasks")
+                                                (org-agenda-prefix-format " %i %-12:c %-48.48b")
+                                                (org-agenda-sorting-strategy '(priority-down)))) nil))
+                                  ("f" "Finish of Day"
+                                   ((agenda "" ((org-agenda-overriding-header "Finish of Day")
+                                                (org-agenda-skip-function
+                                                 '(chpn/org-agenda-skip-if-notags '("FINISH") t)))) nil))))
 
   ;; refile
   (org-refile-use-outline-path . 'file)
   (org-outline-path-complete-in-steps . nil)
-  (org-refile-targets . '((org-agenda-files . (:todo . "TODO"))
-                          (org-agenda-files . (:todo . "NEXT"))
-                          (org-agenda-files . (:todo . "WAIT"))
-                          (org-agenda-files . (:todo . "REFR"))
-                          (org-agenda-files . (:todo . "SOME"))))
+  (org-refile-targets . '((org-agenda-files . (:tag  . "PROJECT"))))
 
   ;; log
   (org-log-done . 'time)
@@ -878,17 +898,20 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-timer-default-timer . 30)
 
   ;; todo
-  (org-todo-keywords . '((sequence "TODO(t)" "WAIT(w@)" "REFR(r)" "SOME(s)" "|" "DONE(d)" "CANCELED(c@)")))
+  (org-todo-keywords . '((sequence "TODO(t)" "DOING(p)" "WAIT(w@)" "|" "DONE(d)" "CANCELED(c@)")))
   (org-enforce-todo-dependencies . t)
   (org-enforce-todo-checkbox-dependencies . t)
   (org-track-ordered-property-with-tag . t)
   ;; (org-priority-start-cycle-with-default . nil)
 
   ;; capture
-  (org-capture-templates . `(("t" "task: 新規タスク" entry (file "agenda/inbox.org")
-                              ,(concat "%[" user-emacs-directory "templates/org-capture/inbox.org]")
+  (org-capture-templates . `(("p" "project: 新規プロジェクト" entry (file "agenda/inbox.org")
+                              ,(concat "%[" user-emacs-directory "templates/org-capture/project.org]")
                               :empty-lines 1 :jump-to-captured nil)
-                             ("s" "schedule: スケジュール" entry (file "agenda/inbox.org")
+                             ("t" "task: 新規タスク" entry (file "agenda/inbox.org")
+                              ,(concat "%[" user-emacs-directory "templates/org-capture/task.org]")
+                              :empty-lines 1 :jump-to-captured nil)
+                             ("s" "schedule: 新規予定" entry (file "agenda/inbox.org")
                               ,(concat "%[" user-emacs-directory "templates/org-capture/schedule.org]")
                               :empty-lines 1)
                              ("m" "memo: 新規メモ" plain (file chpn/today-memo-string-with-mkdir)
@@ -899,9 +922,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                               :immediate-finish 1 :prepend nil)))
 
   ;; tags
-  (org-tag-alist . '((:startgroup . nil) ("requirement" . ?r) ("design" . ?d) ("implement" . ?i) ("test" . ?t) (:endgroup . nil)
-                     (:startgroup . nil) ("comment" . ?c) (:endgroup . nil)))
-  (org-complete-tags-always-offer-all-agenda-tags . t)
+  (org-tag-persistent-alist . '((:startgroup) ("START" . ?s) ("FINISH" . ?f) (:endgroup)))
+  (org-tag-alist . '((:startgroup . nil) ("point" . ?p) ("mark" . ?m) ("comment" . ?c) (:endgroup . nil)))
+  (org-tags-exclude-from-inheritance . '("PROJECT" "START" "FINISH"))
 
   ;; property
   (org-global-properties . '(("Effort_ALL" . "0:05 0:15 0:30 1:00 1:30 2:00 2:30 3:00 4:00")))
@@ -932,9 +955,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ("C-c l" . org-store-link)
   ("M-q"   . chpn-org-prefix)
   (chpn-org-prefix
-   ("i" . (lambda () (interactive) (org-agenda nil "i")))
-   ("p" . (lambda () (interactive) (org-agenda nil "p")))
-   ("m" . (lambda () (interactive) (chpn/open-file (consult-find (concat org-directory "memo/") "\.org#")))))
+   ("m"   . (lambda () (interactive) (chpn/open-file (consult-find (concat org-directory "memo/") "\.org#")))))
   (org-mode-map
    ;; ("C-c i" . org-clock-in)
    ;; ("C-c o" . org-clock-out)
@@ -960,6 +981,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   ;; (emacs-startup-hook . (lambda () (org-agenda nil "i")))
   (kill-emacs-hook . ladicle/org-clock-out-and-save-when-exit)
   (org-clock-in-hook . (lambda ()
+                         (when (org-clocking-p) (org-todo "DOING"))
                          (setq org-mode-line-string (ladicle/task-clocked-time))
                          (run-at-time 0 60 (lambda ()
                                              (setq org-mode-line-string (ladicle/task-clocked-time))
@@ -970,6 +992,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                        (unbind-key key org-mode-map))))
   (auto-save-hook . org-save-all-org-buffers)
   (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies "ALL")))
+  (org-after-todo-statistics-hook . chpn/org-summary-todo)
 
   ;; agenda-viewのweekly viewで、週の始まりを今日（の曜日）にする
   ;; (org-agenda-mode . (lambda ()
@@ -978,6 +1001,26 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :preface
   (define-prefix-command 'chpn-org-prefix)
+  (defun chpn/org-agenda-skip-if-tags (tags &optional local)
+    "エントリが TAGS リスト内のいずれかのタグを持つ場合、agendaでの収集をスキップする。
+LOCAL が非nilの場合は、エンティティに直接指定されたタグのみ検査する。
+この関数は、`org-agenda-skip-function'の引数として使用することを想定している。"
+    (org-back-to-heading t)
+    (let* ((end (org-entry-end-position))
+           (tags-at-point (org-get-tags nil local)))
+      (when (cl-intersection tags tags-at-point :test #'string=) end)))
+  (defun chpn/org-agenda-skip-if-notags (tags &optional local)
+    "エントリが TAGS リスト内のいずれのタグも持たない場合、agendaでの収集をスキップする。
+LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
+この関数は、`org-agenda-skip-function'の引数として使用することを想定している。"
+    (org-back-to-heading t)
+    (let* ((end (org-entry-end-position))
+           (tags-at-point (org-get-tags nil local)))
+      (unless (cl-intersection tags tags-at-point :test #'string=) end)))
+  (defun chpn/org-summary-todo (n-done n-not-done)
+    "すべてのサブツリーが終了したらDONEに切り替える。その他の場合はTODOにする。"
+    (let (org-log-done org-log-states)
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
            (dn (concat org-directory "memo/" (format-time-string "%F_" (current-time)) title))
@@ -1015,8 +1058,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (leaf ob-async :ensure t :require t)
 
   (leaf org-modern :ensure t
-    :hook (org-mode-hook)
     :custom
+    (global-org-modern-mode    . t)
     (org-modern-progress       . nil)
     (org-modern-todo           . nil)
     (org-modern-block          . nil)
@@ -1025,11 +1068,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (org-modern-list           . nil)
     (org-modern-replace-stars  . '("󰇈" "󰎥" "󰎨" "󰎫" "󰎲" "󰎯" "󰎴" "󰎷" "󰎺" "󰎽"))
     (org-modern-star           . 'replace)
-    (org-modern-priority       . '((?A . "") (?B . "") (?C . "") (?D . "")))
     (org-priority-highest      . ?A)
     (org-priority-lowest       . ?D)
     (org-priority-default      . ?C)
-    (org-modern-checkbox       . '((?X . "󰄵") (?- . "") (?\s . "󰄱"))))
+    (org-modern-priority       . '((?A . "")   ;; 重要度高・緊急度高
+                                   (?B . "")   ;; 重要度低・緊急度高
+                                   (?C . "")   ;; 重要度高・緊急度低
+                                   (?D . ""))) ;; 重要度低・緊急度低
+    (org-modern-checkbox       . '((?X . "󰄵") (?- . "󰡖") (?\s . "󰄱"))))
 
   ;; Pomodoro (from @ladicle)
   (leaf org-pomodoro :ensure t
@@ -1118,7 +1164,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
      ("c" . org-roam-capture)
      ("f" . org-roam-node-find)
      ("i" . org-roam-node-insert)
-     ("r" . org-roam-ref-add))
+     ("r" . org-roam-ref-add)
+     ("w" . org-roam-refile))
     :preface
     (define-prefix-command 'chpn-roam-prefix)
     (defconst roam-dir (concat org-directory "roam/"))
@@ -1137,9 +1184,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     (org-journal-dir . journal-dir)
     (org-journal-date-format . date-format-jp)
     (org-journal-search-result-date-format . date-format-jp)
-    (org-journal-time-prefix . "*** ")
+    (org-journal-time-prefix . "** ")
     :hook
-    (org-journal-after-header-create-hook . chpn/org-journal-insert-template )
+    (org-journal-after-header-create-hook . chpn/org-journal-insert-template)
     :preface
     (defconst journal-dir (concat org-directory "journal/"))
     (defconst date-format-jp "%x（%a）")
@@ -1172,8 +1219,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :hook
   (calendar-move-hook . chpn/japanese-holiday-show)
   (calendar-today-visible-hook . japanese-holiday-mark-weekend)
-  (calendar-today-invisible-hook . japanese-holiday-mark-weekend)
   (calendar-today-visible-hook . calendar-mark-today)
+  (calendar-today-invisible-hook . japanese-holiday-mark-weekend)
   :preface
   (defconst dow-array-jp ["日" "月" "火" "水" "木" "金" "土"])
   (defun chpn/japanese-holiday-show (&rest _args)
@@ -1606,7 +1653,7 @@ Conventional Commits仕様は、コミットメッセージの上位にある軽
 
 (leaf lsp-haskell :ensure t
   :custom
-  ;; (lsp-haskell-server-args . '("-d"))
+  (lsp-haskell-server-args . '("-d"))
   (lsp-haskell-formatting-provider . "fourmolu"))
 
 (leaf haskell-mode :ensure t
