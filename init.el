@@ -1210,7 +1210,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (org-journal-dir . journal-dir)
     (org-journal-date-format . date-format-jp)
     (org-journal-search-result-date-format . date-format-jp)
-    (org-journal-time-prefix . "** ")
+    (org-journal-time-prefix . "- ")
     :hook
     (org-journal-after-header-create-hook . chpn/org-journal-insert-template)
     :preface
