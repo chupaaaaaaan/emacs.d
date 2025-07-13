@@ -802,6 +802,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
            org-agenda-files
            org-default-notes-file
            org-clock-effort
+           org-modules
            recentf-exclude)
   :defun (org-back-to-heading
           org-clock-get-clocked-time
@@ -810,10 +811,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-duration-to-minutes
           org-end-of-subtree
           org-entry-end-position
+          org-entry-get
           org-get-tags
           org-read-date
           org-todo
           org-update-statistics-cookies
+          chpn/org-agenda-today-timestamp-until
           ladicle/task-clocked-time)
   :custom
   ;; files and directories
@@ -842,42 +845,48 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-skip-scheduled-delay-if-deadline . 'post-deadline)
   (org-agenda-use-time-grid . nil)
   (org-agenda-breadcrumbs-separator . " » ")
-  (org-agenda-format-date . (lambda (date)
-                              (format-time-string "%x（%a）" (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))))
+  (org-agenda-format-date
+   . (lambda (date) (format-time-string "%x（%a）" (encode-time `(0 0 0 ,(nth 1 date) ,(nth 0 date) ,(nth 2 date))))))
+  (org-habit-graph-column . 80)
+  (org-extend-today-until . 6) ;; 翌日午前6時までは当日とみなす
+  (org-use-effective-time . t) ;; habitの一貫性グラフを正しく表示するために必要
   (org-agenda-custom-commands . `(("i" "Agenda"
                                    ((agenda "" ((org-agenda-span 'day)
-                                                (org-agenda-prefix-format " %i %-12:c%?-12t% s %.48b")
+                                                (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
+                                                (org-habit-show-habits nil)
+                                                (org-agenda-prefix-format " %i %-12:c%-12t% s %.48b")))
+
+                                    (agenda "" ((org-agenda-overriding-header "Habits")
                                                 (org-agenda-skip-function
-                                                 '(chpn/org-agenda-skip-if-tags '("START" "FINISH" "PROJECT") t))))
+                                                 '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
+                                                      (chpn/org-agenda-skip-if-tags '("START" "FINISH" "PROJECT") t)))))
+
+                                    (agenda "" ((org-agenda-overriding-header "Tasks to Perform at Start or Finish of Day")
+                                                (org-agenda-skip-function
+                                                 '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
+                                                      (chpn/org-agenda-skip-if-notags '("START" "FINISH") t)))))
+
+                                    (tags ,(format "CLOSED>=\"<%s>\"|-START-FINISH-PROJECT&TODO=\"DOING\""
+                                                   (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
+                                          ((org-agenda-overriding-header "Today's Done or Doing")
+                                           (org-agenda-prefix-format " %i %-12:c %-48.48b")))
+
                                     (tags-todo "-INBOX-START-FINISH-PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
                                                 (org-agenda-sorting-strategy '(priority-down))))
-                                    (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
-                                               ((org-agenda-overriding-header "Projects")
-                                                (org-agenda-prefix-format " %i %-12:c %-48.48b")
-                                                (org-agenda-sorting-strategy '(priority-down scheduled-up))))
-                                    (tags-todo "+INBOX"
-                                               ((org-agenda-overriding-header "Inbox")
-                                                (org-agenda-todo-ignore-scheduled nil)
-                                                (org-tags-match-list-sublevels nil))) nil))
-                                  ("s" "Start of Day"
-                                   ((agenda "" ((org-agenda-overriding-header "Start of Day")
-                                                (org-agenda-skip-function
-                                                 '(chpn/org-agenda-skip-if-notags '("START") t))))
+
                                     (tags-todo "+INBOX"
                                                ((org-agenda-overriding-header "Inbox")
                                                 (org-agenda-todo-ignore-scheduled nil)
                                                 (org-tags-match-list-sublevels nil)))
-                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DONE-CANCELED"
-                                               ((org-agenda-overriding-header "Tasks")
+
+                                    (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
+                                               ((org-agenda-overriding-header "Projects")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
-                                                (org-agenda-sorting-strategy '(priority-down)))) nil))
-                                  ("f" "Finish of Day"
-                                   ((agenda "" ((org-agenda-overriding-header "Finish of Day")
-                                                (org-agenda-skip-function
-                                                 '(chpn/org-agenda-skip-if-notags '("FINISH") t)))) nil))))
+                                                (org-agenda-sorting-strategy '(priority-down scheduled-up))))
+                                   ) nil)))
 
   ;; refile
   (org-refile-use-outline-path . 'file)
@@ -1001,6 +1010,22 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :preface
   (define-prefix-command 'chpn-org-prefix)
+  (defun chpn/org-agenda-today-timestamp-until (offset)
+    "現在時刻が OFFSET 時より前なら \"昨日 OFFSET:00\"、
+そうでなければ \"今日 OFFSET:00\" を \"YYYY-MM-DD HH:00\" 形式で返す。
+OFFSET は 0‒23 の整数を想定する。"
+    (unless (and (integerp offset) (<= 0 offset 23))
+      (user-error "OFFSET must be an integer between 0 and 23"))
+    (let* ((now          (current-time))
+           (current-hour (nth 2 (decode-time now)))
+           (base-time    (if (< current-hour offset) (time-subtract now (days-to-time 1)) now))
+           (fmt          (format "%%Y-%%m-%%d %02d:00" offset)))
+      (format-time-string fmt base-time)))
+  (defun chpn/org-agenda-skip-if-noprop (key value)
+    "値がVALUEであるKEYプロパティを持たないエントリの収集をスキップする。"
+    (org-back-to-heading t)
+    (let* ((end (org-entry-end-position)))
+      (unless (string= (org-entry-get (point) key) value) end)))
   (defun chpn/org-agenda-skip-if-tags (tags &optional local)
     "エントリが TAGS リスト内のいずれかのタグを持つ場合、agendaでの収集をスキップする。
 LOCAL が非nilの場合は、エンティティに直接指定されたタグのみ検査する。
@@ -1055,6 +1080,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   :config
   (dolist (pattern org-agenda-files)
     (add-to-list 'recentf-exclude pattern))
+  (add-to-list 'org-modules 'org-habit)
   (leaf ob-async :ensure t :require t)
 
   (leaf org-modern :ensure t
