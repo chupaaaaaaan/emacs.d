@@ -850,7 +850,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-habit-graph-column . 80)
   (org-extend-today-until . 6) ;; 翌日午前6時までは当日とみなす
   (org-use-effective-time . t) ;; habitの一貫性グラフを正しく表示するために必要
-  (org-agenda-custom-commands . `(("i" "Agenda"
+  (org-agenda-custom-commands . '(("i" "Agenda"
                                    ((agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
                                                 (org-habit-show-habits nil)
@@ -866,8 +866,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                  '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
                                                       (chpn/org-agenda-skip-if-notags '("START" "FINISH") t)))))
 
-                                    (tags ,(format "CLOSED>=\"<%s>\"|-START-FINISH-PROJECT&TODO=\"DOING\""
-                                                   (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
+                                    (tags (format "CLOSED>=\"<%s>\"|-START-FINISH-PROJECT&TODO=\"DOING\""
+                                                  (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
                                           ((org-agenda-overriding-header "Today's Done or Doing")
                                            (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
