@@ -1,4 +1,4 @@
-* TODO [/] %?                                                       :PROJECT:
+* TODO [0/0] %?                                                     :PROJECT:
 :PROPERTIES:
 :COOKIE_DATA: todo
 :CREATED: %U

@@ -1,4 +1,4 @@
-* TODO [/] %?
+* TODO [0/0] %?
 :PROPERTIES:
 :COOKIE_DATA: checkbox recursive
 :CREATED: %U
