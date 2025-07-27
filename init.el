@@ -1457,6 +1457,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 (leaf jsonrpc :ensure t)
 
 (leaf copilot :ensure t
+  :disabled t
   :defvar (copilot-mode)
   :hook (prog-mode-hook
          text-mode-hook
@@ -1481,6 +1482,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (message "Copilot mode %s" (if copilot-mode "enabled" "disabled"))))
 
 (leaf copilot-chat :ensure t
+  :disabled t
   :hook
   (git-commit-setup-hook . copilot-chat-insert-commit-message)
   :custom
