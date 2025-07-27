@@ -868,10 +868,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
                                     (tags (format "CLOSED>=\"<%s>\"|-START-FINISH-PROJECT&TODO=\"DOING\""
                                                   (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
-                                          ((org-agenda-overriding-header "Today's Done or Doing")
+                                          ((org-agenda-overriding-header "Doing and Today's Done")
                                            (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
-                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DONE-CANCELED"
+                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DOING-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
