@@ -876,7 +876,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
-                                                (org-agenda-sorting-strategy '(priority-down))))
+                                                (org-agenda-sorting-strategy '(category-keep priority-down))))
 
                                     (tags-todo "+INBOX"
                                                ((org-agenda-overriding-header "Inbox")
@@ -886,7 +886,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                     (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Projects")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
-                                                (org-agenda-sorting-strategy '(priority-down scheduled-up))))
+                                                (org-agenda-sorting-strategy '(category-keep))))
                                    ) nil)))
 
   ;; refile
