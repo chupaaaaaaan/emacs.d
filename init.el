@@ -543,6 +543,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 ;; volatile-highlights
 (leaf volatile-highlights :ensure t
+  :require t
   :blackout t
   :defun (vhl/define-extension vhl/install-extension)
   :custom
