@@ -855,7 +855,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                    ((agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
                                                 (org-habit-show-habits nil)
-                                                (org-agenda-prefix-format " %i %-12:c%-12t% s %.48b")))
+                                                (org-agenda-prefix-format " %i %-12:c%-12t% s [%4e] %.48b")))
 
                                     (agenda "" ((org-agenda-overriding-header "Habits")
                                                 (org-agenda-skip-function
@@ -886,8 +886,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                     (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Projects")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
-                                                (org-agenda-sorting-strategy '(category-keep))))
-                                   ) nil)))
+                                                (org-agenda-sorting-strategy '(category-keep))))) nil)))
 
   ;; refile
   (org-refile-use-outline-path . 'file)
