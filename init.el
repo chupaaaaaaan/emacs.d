@@ -851,6 +851,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-habit-graph-column . 80)
   (org-extend-today-until . 6) ;; 翌日午前6時までは当日とみなす
   (org-use-effective-time . t) ;; habitの一貫性グラフを正しく表示するために必要
+  (org-agenda-remove-tags . t)
   (org-agenda-custom-commands . '(("i" "Agenda"
                                    ((agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
@@ -860,19 +861,24 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                     (agenda "" ((org-agenda-overriding-header "Habits")
                                                 (org-agenda-skip-function
                                                  '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
-                                                      (chpn/org-agenda-skip-if-tags '("START" "FINISH" "PROJECT") t)))))
+                                                      (chpn/org-agenda-skip-if-tags '("START" "FINISH") t)))))
 
-                                    (agenda "" ((org-agenda-overriding-header "Tasks to Perform at Start or Finish of Day")
+                                    (agenda "" ((org-agenda-overriding-header "Tasks to Perform at Start of Day")
                                                 (org-agenda-skip-function
                                                  '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
-                                                      (chpn/org-agenda-skip-if-notags '("START" "FINISH") t)))))
+                                                      (chpn/org-agenda-skip-if-notags '("START") t)))))
 
-                                    (tags (format "CLOSED>=\"<%s>\"|-START-FINISH-PROJECT&TODO=\"DOING\""
+                                    (agenda "" ((org-agenda-overriding-header "Tasks to Perform at Finish of Day")
+                                                (org-agenda-skip-function
+                                                 '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
+                                                      (chpn/org-agenda-skip-if-notags '("FINISH") t)))))
+
+                                    (tags (format "CLOSED>=\"<%s>\"|TODO=\"DOING\""
                                                   (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
                                           ((org-agenda-overriding-header "Doing and Today's Done")
                                            (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
-                                    (tags-todo "-INBOX-START-FINISH-PROJECT/-DOING-DONE-CANCELED"
+                                    (tags-todo "-INBOX-START-FINISH-PROJECT-BOOK/-DOING-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
@@ -883,9 +889,15 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                 (org-agenda-todo-ignore-scheduled nil)
                                                 (org-tags-match-list-sublevels nil)))
 
-                                    (tags-todo "-INBOX-START-FINISH+PROJECT/-DONE-CANCELED"
+                                    (tags-todo "-INBOX+PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Projects")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
+                                                (org-agenda-sorting-strategy '(category-keep))))
+
+                                    (tags-todo "-INBOX+BOOK/-DONE-CANCELED"
+                                               ((org-agenda-overriding-header "Books")
+                                                (org-agenda-prefix-format " %i %-12:c")
+                                                (org-agenda-todo-ignore-scheduled 'all)
                                                 (org-agenda-sorting-strategy '(category-keep))))) nil)))
 
   ;; refile
@@ -931,16 +943,16 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                               :immediate-finish 1 :prepend nil)))
 
   ;; tags
-  (org-tag-persistent-alist . '((:startgroup) ("START" . ?s) ("FINISH" . ?f) (:endgroup)))
-  (org-tag-alist . '((:startgroup . nil) ("point" . ?p) ("mark" . ?m) ("comment" . ?c) (:endgroup . nil)))
-  (org-tags-exclude-from-inheritance . '("PROJECT" "START" "FINISH"))
+  (org-tag-persistent-alist . '((:startgroup) ("PROJECT" . ?p) ("BOOK" . ?b) ("START" . ?s) ("FINISH" . ?f) (:endgroup)))
+  (org-tag-alist . '((:startgroup . nil) ("comment" . ?c) (:endgroup . nil)))
+  (org-tags-exclude-from-inheritance . '("PROJECT" "BOOK" "START" "FINISH"))
 
   ;; property
   (org-global-properties . '(("Effort_ALL" . "0:05 0:15 0:30 1:00 1:30 2:00 2:30 3:00 4:00")))
 
   ;; columns
   ;; (org-columns-default-format . "%40ITEM %TAGS %TODO %BLOCKED %PRIORITY %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
-  (org-columns-default-format . "%40ITEM %TODO %SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM")
+  (org-columns-default-format . "%80ITEM %TODO %25SCHEDULED %DEADLINE %EFFORT{:} %CLOCKSUM_T %CLOCKSUM %TAGS")
 
   ;; ;; archive
   (org-archive-location . "archive/archive_%s::")
