@@ -1002,6 +1002,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (auto-save-hook . org-save-all-org-buffers)
   (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies "ALL")))
   (org-after-todo-statistics-hook . chpn/org-summary-todo)
+  (org-after-tags-change-hook . chpn/org-cookie-data-by-project)
 
   ;; agenda-viewのweekly viewで、週の始まりを今日（の曜日）にする
   ;; (org-agenda-mode . (lambda ()
@@ -1010,6 +1011,19 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :preface
   (define-prefix-command 'chpn-org-prefix)
+  (defun chpn/org-cookie-data-by-project ()
+    "TODOエントリにPROJECTタグがついている場合は、COOKIE_DATA プロパティに \"todo\" を設定する。
+TODOエントリにPROJECTタグがついていない場合は、COOKIE_DATA プロパティに \"checkbox recursive\" を設定する。
+TODOエントリ以外は無視される。
+この関数は、`org-after-tags-change-hook'に設定して使用することを想定している。"
+    (save-excursion
+      (org-back-to-heading t)
+      (when (org-get-todo-state)
+        (let* ((tags (org-get-tags nil t))
+               (has-project (member "PROJECT" tags))
+               (target (if has-project "todo" "checkbox recursive")))
+          (org-entry-delete nil "COOKIE_DATA")
+          (org-entry-put nil "COOKIE_DATA" target)))))
   (defun chpn/org-agenda-today-timestamp-until (offset)
     "現在時刻が OFFSET 時より前なら \"昨日 OFFSET:00\"、
 そうでなければ \"今日 OFFSET:00\" を \"YYYY-MM-DD HH:00\" 形式で返す。
