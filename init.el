@@ -927,16 +927,16 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   ;; capture
   (org-capture-templates . `(("p" "project: 新規プロジェクト" entry (file "agenda/inbox.org")
-                              ,(concat "%[" user-emacs-directory "templates/org-capture/project.org]")
+                              ,(concat "%[" user-emacs-directory "templates/capture/project.org]")
                               :empty-lines 1 :jump-to-captured nil)
                              ("t" "task: 新規タスク" entry (file "agenda/inbox.org")
-                              ,(concat "%[" user-emacs-directory "templates/org-capture/task.org]")
+                              ,(concat "%[" user-emacs-directory "templates/capture/task.org]")
                               :empty-lines 1 :jump-to-captured nil)
                              ("s" "schedule: 新規予定" entry (file "agenda/inbox.org")
-                              ,(concat "%[" user-emacs-directory "templates/org-capture/schedule.org]")
+                              ,(concat "%[" user-emacs-directory "templates/capture/schedule.org]")
                               :empty-lines 1)
                              ("m" "memo: 新規メモ" plain (file chpn/today-memo-string-with-mkdir)
-                              ,(concat "%[" user-emacs-directory "templates/org-capture/memo.org]")
+                              ,(concat "%[" user-emacs-directory "templates/capture/memo.org]")
                               :empty-lines 1 :jump-to-captured 1 :unnarrowed nil)
                              ("l" "link: リンクを追加" item (clock)
                               "%A\n"
@@ -1102,7 +1102,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (save-some-buffers t))
 
   :init
-  (chpn/copy-directory-recursively (concat user-emacs-directory "templates/org-agenda") (concat org-directory "agenda/"))
+  (chpn/copy-directory-recursively (concat user-emacs-directory "templates/agenda") (concat org-directory "agenda/"))
   :config
   (dolist (pattern org-agenda-files)
     (add-to-list 'recentf-exclude pattern))
