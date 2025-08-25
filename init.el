@@ -852,6 +852,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-extend-today-until . 6) ;; 翌日午前6時までは当日とみなす
   (org-use-effective-time . t) ;; habitの一貫性グラフを正しく表示するために必要
   (org-agenda-remove-tags . t)
+  (org-agenda-block-separator . ?·)
   (org-agenda-custom-commands . '(("i" "Agenda"
                                    ((agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
