@@ -26,3 +26,4 @@ el-get/
 elpa/
 .org-id-locations
 org-roam.db
+templates/journal/template.org

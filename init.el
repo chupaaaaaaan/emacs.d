@@ -1246,7 +1246,11 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (defun chpn/org-journal-insert-template ()
       (insert "\n")
       (goto-char (point-max))
-      (insert-file-contents (concat user-emacs-directory "templates/journal-template.org"))
+      (let ((template-file (concat user-emacs-directory "templates/journal/template.org")))
+        (if (file-exists-p template-file)
+            (insert-file-contents template-file)
+          (user-error "Journal template file `%s' not found" template-file)))
+      ;; (insert-file-contents (concat user-emacs-directory "templates/journal/-template.org"))
       (goto-char (point-max))))
 
   (leaf org-re-reveal :ensure t)
