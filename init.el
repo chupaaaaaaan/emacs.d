@@ -1133,59 +1133,6 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
                                    (?D . ""))) ;; 重要度低・緊急度低
     (org-modern-checkbox       . '((?X . "󰄵") (?- . "󰡖") (?\s . "󰄱"))))
 
-  ;; Pomodoro (from @ladicle)
-  (leaf org-pomodoro :ensure t
-    :custom
-    (org-pomodoro-ask-upon-killing . t)
-    (org-pomodoro-keep-killed-pomodoro-time . t)
-    (org-pomodoro-manual-break . t)
-    (org-pomodoro-long-break-frequency . 4)
-    (org-pomodoro-format . "%s") ;;  
-    (org-pomodoro-short-break-format . "%s")
-    (org-pomodoro-long-break-format . "%s")
-    (org-pomodoro-overtime-format . "%s")
-    (org-pomodoro-length . 25)
-    (org-pomodoro-short-break-length . 5)
-    (org-pomodoro-long-break-length . 15)
-    ;; :custom-face
-    ;; (org-pomodoro-mode-line . ((t (:foreground "#ff5555"))))
-    ;; (org-pomodoro-mode-line-break . ((t (:foreground "#50fa7b"))))
-
-    :bind
-    (org-agenda-mode-map
-     :package org-agenda
-     ("P" . org-pomodoro))
-
-
-    ;; :preface
-    ;; ;; from https://gist.github.com/ayman/bb72a25e16af9e6f30bf
-    ;; (defun terminal-notifier-notify (title message)
-    ;;   "Show a message with `terminal-notifier-command`."
-    ;;   (start-process "terminal-notifier"
-    ;;                  "*terminal-notifier*"
-    ;;                  (executable-find "terminal-notifier")
-    ;;                  "-title" title
-    ;;                  "-message" message))
-
-    ;; (defun chpn/pomodoro-notify (title body)
-    ;;   "Save buffers and stop clocking when kill emacs."
-    ;;   (cond
-    ;;    ((eq system-type 'darwin)
-    ;;     (terminal-notifier-notify title body))
-    ;;    ((eq system-type 'gnu/linux)
-    ;;     (notifications-notify :title title :body body))
-    ;;    ((eq system-type 'windows-nt)
-    ;;     (w32-notification-notify :title title :body body))))
-
-    ;; :hook
-    ;; (org-pomodoro-started-hook              . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "スタート！25分間がんばろう")))
-    ;; (org-pomodoro-overtime-hook             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "25分間お疲れ様！まだがんばる？")))
-    ;; (org-pomodoro-finished-hook             . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "お疲れ様！休憩にしましょう")))
-    ;; (org-pomodoro-short-break-finished-hook . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "小休憩終わり！またがんばりましょう")))
-    ;; (org-pomodoro-long-break-finished-hook  . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroを一周したよ！またよろしくね")))
-    ;; (org-pomodoro-killed-hook               . (lambda () (chpn/pomodoro-notify "Org Pomodoro" "Pomodoroをkillしたよ！またよろしくね")))
-    )
-
   (leaf org-roam :ensure t
     :defvar (org-directory
              org-roam-directory)
