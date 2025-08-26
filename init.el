@@ -1237,7 +1237,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (org-journal-dir . journal-dir)
     (org-journal-date-format . date-format-jp)
     (org-journal-search-result-date-format . date-format-jp)
-    (org-journal-time-prefix . "*** ")
+    (org-journal-time-prefix . "** ")
     :hook
     (org-journal-after-header-create-hook . chpn/org-journal-insert-template)
     :preface
@@ -1251,7 +1251,6 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
         (if (file-exists-p template-file)
             (insert-file-contents template-file)
           (user-error "Journal template file `%s' not found" template-file)))
-      ;; (insert-file-contents (concat user-emacs-directory "templates/journal/-template.org"))
       (goto-char (point-max))))
 
   (leaf org-re-reveal :ensure t)
