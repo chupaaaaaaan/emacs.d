@@ -811,9 +811,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-clocking-p
           org-duration-to-minutes
           org-end-of-subtree
+          org-entry-delete
           org-entry-end-position
           org-entry-get
+          org-entry-put
           org-get-tags
+          org-get-todo-state
           org-read-date
           org-todo
           org-update-statistics-cookies
