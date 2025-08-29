@@ -241,6 +241,11 @@
   ("M-[" . previous-buffer)
   ("M-]" . next-buffer))
 
+(leaf browse-url
+  :custom
+  (browse-url-generic-program . "wslview")
+  (browse-url-browser-function . 'browse-url-generic))
+
 (leaf centaur-tabs :ensure t
   :disabled t
   :defun (centaur-tabs-headline-match centaur-tabs-get-group-name)
