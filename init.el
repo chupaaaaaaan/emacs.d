@@ -837,9 +837,10 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                  '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
                                                       (chpn/org-agenda-skip-if-notags '("FINISH") t)))))
 
-                                    (tags (format "CLOSED>=\"<%s>\"|TODO=\"DOING\""
+                                    (tags (format "CLOSED>=\"<%s>\"|LAST_REPEAT>=\"<%s>\"|TODO=\"DOING\""
+                                                  (chpn/org-agenda-today-timestamp-until 6)
                                                   (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
-                                          ((org-agenda-overriding-header "Doing and Today's Done")
+                                          ((org-agenda-overriding-header "Doing and Today's Done (including habits)")
                                            (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
                                     (tags-todo "-INBOX-START-FINISH-PROJECT-BOOK/-DOING-DONE-CANCELED"
