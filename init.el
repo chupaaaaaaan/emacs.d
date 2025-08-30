@@ -1663,10 +1663,67 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("<tab>" . sqlformat-buffer)))
 
 (leaf vterm :ensure t
+  :defvar (vterm-keymap-exceptions)
+  :custom
+  (vterm-keymap-exceptions key . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
+                                   "<f1>" "<f2>" "<f3>" "<f4>" "<f5>" "<f6>"
+                                   "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                                   "M-<f1>" "M-<f2>" "M-<f3>" "M-<f4>" "M-<f5>" "M-<f6>"
+                                   "M-<f7>" "M-<f8>" "M-<f9>" "M-<f10>" "M-<f11>" "M-<f12>"
+                                   "M-1" "M-2" "M-3" "M-4" "M-5" "M-6" "M-7" "M-8" "M-9" "M-0"
+                                   "M-!" "M-\"" "M-#" "M-$" "M-%" "M-&" "M-'" "M--" "M-=" "M-^" "M-~" "M-|"
+                                   "M-[" "M-]" "M-{" "M-}" "M-;" "M-:" "M-," "M-." "M-<" "M->" "M-_"
+                                   "M-a" "M-b" "M-c" "M-d" "M-e" "M-f" "M-g" "M-h" "M-i" "M-j" "M-k" "M-l"
+                                   "M-m" "M-n" "M-p" "M-q" "M-r" "M-s" "M-t" "M-u" "M-v" "M-w" "M-z"))
   :bind
   (vterm-mode-map
    ("C-h" . vterm-send-C-h)
-   ("C-g" . vterm-send-C-g)))
+   ("C-g" . vterm-send-C-g))
+  (chpn-function-prefix
+   :package init
+   ("v" . chpn/vterm))
+  :preface
+  (defun chpn/vterm (&optional arg)
+    "補完ミニバッファ上で、既存のvtermバッファを選択するか、新しいvtermバッファを開く。
+候補:
+- `New vterm'          自動採番で新規作成
+- `New vterm (named)'  名前を指定して新規作成
+- 既存の vterm バッファ
+C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
+    (interactive "P")
+    (let* ((existing (mapcar (lambda (buf)
+                               (cons (buffer-name buf) buf))
+                             (seq-filter (lambda (buf)
+                                           (with-current-buffer buf (derived-mode-p 'vterm-mode)))
+                                         (buffer-list))))
+           (special  '(("New vterm"         . :new-auto)
+                       ("New vterm (named)" . :new-named)))
+           (cands    (append existing special))
+           (completion-extra-properties
+            (list :annotation-function
+                  (lambda (cand)
+                    (pcase (cdr (assoc cand cands))
+                      (:new-auto  "  create (auto)")
+                      (:new-named "  create (prompt)")
+                      (buf (with-current-buffer buf
+                             (concat "  " default-directory)))))))
+           (choice (completing-read "vterm: " (mapcar #'car cands) nil t)))
+      (pcase (cdr (assoc choice cands))
+        (:new-auto
+         (let ((vterm-buffer-name (generate-new-buffer-name "*vterm*")))
+           (if arg
+               (vterm-other-window)
+             (vterm))))
+        (:new-named
+         (let* ((default (generate-new-buffer-name "*vterm*"))
+                (name (read-string "Buffer name: " default))
+                (vterm-buffer-name name))
+           (if arg
+               (vterm-other-window)
+             (vterm))))
+        (buf (if arg
+                 (pop-to-buffer buf)
+               (switch-to-buffer buf)))))))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
