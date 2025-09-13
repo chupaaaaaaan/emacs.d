@@ -1693,24 +1693,17 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
                              (seq-filter (lambda (buf)
                                            (with-current-buffer buf (derived-mode-p 'vterm-mode)))
                                          (buffer-list))))
-           (special  '(("New vterm"         . :new-auto)
-                       ("New vterm (named)" . :new-named)))
+           (special  '(("New vterm" . :new-named)))
            (cands    (append existing special))
            (completion-extra-properties
             (list :annotation-function
                   (lambda (cand)
                     (pcase (cdr (assoc cand cands))
-                      (:new-auto  "  create (auto)")
                       (:new-named "  create (prompt)")
                       (buf (with-current-buffer buf
                              (concat "  " default-directory)))))))
            (choice (completing-read "vterm: " (mapcar #'car cands) nil t)))
       (pcase (cdr (assoc choice cands))
-        (:new-auto
-         (let ((vterm-buffer-name (generate-new-buffer-name "*vterm*")))
-           (if arg
-               (vterm-other-window)
-             (vterm))))
         (:new-named
          (let* ((default (generate-new-buffer-name "*vterm*"))
                 (name (read-string "Buffer name: " default))
