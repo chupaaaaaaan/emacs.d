@@ -376,8 +376,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf which-key :ensure t
   :blackout which-key-mode
-  :hook
-  (emacs-startup-hook . which-key-mode))
+  :custom
+  (which-key-mode . t))
 
 (leaf golden-ratio :ensure t
   :blackout t
