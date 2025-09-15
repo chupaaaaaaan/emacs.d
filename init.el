@@ -812,7 +812,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-format-date
    . (lambda (date) (format-time-string "%x（%a）" (encode-time `(0 0 0 ,(nth 1 date) ,(nth 0 date) ,(nth 2 date))))))
   (org-habit-graph-column . 80)
-  (org-extend-today-until . 6) ;; 翌日午前6時までは当日とみなす
+  (org-extend-today-until . chpn/today-cutoff-hour) ;; 翌日午前`chpn/today-cutoff-hour'時までは当日とみなす
   (org-use-effective-time . t) ;; habitの一貫性グラフを正しく表示するために必要
   (org-agenda-remove-tags . t)
   (org-agenda-block-separator . ?·)
@@ -838,8 +838,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                       (chpn/org-agenda-skip-if-notags '("FINISH") t)))))
 
                                     (tags (format "CLOSED>=\"<%s>\"|LAST_REPEAT>=\"<%s>\"|TODO=\"DOING\""
-                                                  (chpn/org-agenda-today-timestamp-until 6)
-                                                  (chpn/org-agenda-today-timestamp-until 6)) ;; 翌日午前6時までは当日とみなす
+                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)
+                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)) ;; 翌日午前`chpn/today-cutoff-hour'時までは当日とみなす
                                           ((org-agenda-overriding-header "Doing and Today's Done (including habits)")
                                            (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
@@ -978,6 +978,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :preface
   (define-prefix-command 'chpn-org-prefix)
+  (defconst chpn/today-cutoff-hour 2)
   (defun chpn/org-cookie-data-by-project ()
     "TODOエントリにPROJECTタグがついている場合は、COOKIE_DATA プロパティに \"todo\" を設定する。
 TODOエントリにPROJECTタグがついていない場合は、COOKIE_DATA プロパティに \"checkbox recursive\" を設定する。
