@@ -978,7 +978,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   :preface
   (define-prefix-command 'chpn-org-prefix)
-  (defconst chpn/today-cutoff-hour 2)
+  (defconst chpn/today-cutoff-hour 6)
   (defun chpn/org-cookie-data-by-project ()
     "TODOエントリにPROJECTタグがついている場合は、COOKIE_DATA プロパティに \"todo\" を設定する。
 TODOエントリにPROJECTタグがついていない場合は、COOKIE_DATA プロパティに \"checkbox recursive\" を設定する。
