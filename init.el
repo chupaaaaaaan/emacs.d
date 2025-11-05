@@ -1684,8 +1684,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (defun chpn/vterm (&optional arg)
     "補完ミニバッファ上で、既存のvtermバッファを選択するか、新しいvtermバッファを開く。
 候補:
-- `New vterm'          自動採番で新規作成
-- `New vterm (named)'  名前を指定して新規作成
+- `New vterm'  名前を指定して新規作成
 - 既存の vterm バッファ
 C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
     (interactive "P")
