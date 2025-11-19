@@ -1357,7 +1357,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   :bind
   ("C-c y" . company-yasnippet)
   (company-active-map
-   ("<tab>" . nil)
+   ("<tab>" . company-complete)
    ("C-n" . company-select-next)
    ("C-p" . company-select-previous)
    ("C-s" . company-filter-candidates)
