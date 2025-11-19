@@ -342,11 +342,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf mule
   :custom
-  (default-input-method . "japanese-mozc")
+  ;; (default-input-method . "japanese-mozc")
   (current-language-environment . "Japanese"))
 
 ;; input method
 (leaf mozc :ensure t
+  :disabled
   :if (eq system-type 'gnu/linux)
   :bind*
   ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
