@@ -1512,18 +1512,21 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (leaf lsp-ui :ensure t
     ;; :custom-face
     ;; (lsp-ui-doc-background ((nil (:background "black"))))
+    :bind
+    (lsp-mode-map
+     ("C-c d" . lsp-ui-doc-glance))
     :custom
     (lsp-ui-doc-enable . nil)
     (lsp-ui-doc-header . t)
     (lsp-ui-doc-include-signature . t)
-    (lsp-ui-doc-position . 'top)
+    (lsp-ui-doc-position . 'at-point)
     (lsp-ui-doc-max-width . 150)
     (lsp-ui-doc-max-height . 30)
     (lsp-ui-doc-show-with-mouse . t)
     (lsp-ui-doc-show-with-cursor . t)
     (lsp-ui-doc-use-childframe . t)
     (lsp-ui-doc-use-webkit . nil)
-    (lsp-ui-flycheck-list-position . 'right)
+    ;; (lsp-ui-flycheck-list-position . 'right)
     (lsp-ui-imenu-enable . nil)
     ;; (lsp-ui-imenu-auto-refresh . t)
     ;; (lsp-ui-imenu-kind-position . 'top)
