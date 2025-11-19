@@ -1478,8 +1478,10 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (leaf flycheck-posframe :ensure t
     :custom
     (flycheck-posframe-position . 'window-bottom-right-corner)
-    :hook
-    (flycheck-mode-hook . flycheck-posframe-mode)))
+    (flycheck-posframe-border-width . 2)
+    :hook flycheck-mode-hook
+    :config
+    (flycheck-posframe-configure-pretty-defaults)))
 
 ;; lsp
 (leaf lsp-mode :ensure t
