@@ -1320,7 +1320,6 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     :custom
     (magit-auto-revert-mode . nil)
     :config
-    (leaf magit-file-icons :ensure t)
     (leaf magit-section :ensure t))
   (leaf git-gutter :ensure t
     :blackout t
