@@ -696,8 +696,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf consult-lsp :ensure t
   :bind
   ("M-s E" . consult-lsp-diagnostics)
-  ("M-s s" . consult-lsp-symbols)
-  ("M-s S" . consult-lsp-file-symbols))
+  ("M-s s" . consult-lsp-file-symbols)
+  ("M-s S" . consult-lsp-symbols))
 
 (leaf orderless :ensure t
   :custom
