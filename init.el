@@ -1667,20 +1667,22 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 (leaf vterm :ensure t vterm-toggle
   :defvar (vterm-keymap-exceptions)
   :custom
-  (vterm-keymap-exceptions key . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
-                                   "<f1>" "<f2>" "<f3>" "<f4>" "<f5>" "<f6>"
-                                   "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
-                                   "M-<f1>" "M-<f2>" "M-<f3>" "M-<f4>" "M-<f5>" "M-<f6>"
-                                   "M-<f7>" "M-<f8>" "M-<f9>" "M-<f10>" "M-<f11>" "M-<f12>"
-                                   "M-1" "M-2" "M-3" "M-4" "M-5" "M-6" "M-7" "M-8" "M-9" "M-0"
-                                   "M-!" "M-\"" "M-#" "M-$" "M-%" "M-&" "M-'" "M--" "M-=" "M-^" "M-~" "M-|"
-                                   "M-{" "M-}" "M-;" "M-:" "M-," "M-." "M-<" "M->" "M-_"
-                                   "M-a" "M-b" "M-c" "M-d" "M-e" "M-f" "M-g" "M-h" "M-i" "M-j" "M-k" "M-l"
-                                   "M-m" "M-n" "M-p" "M-q" "M-r" "M-s" "M-t" "M-u" "M-v" "M-w" "M-z"))
+  (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
+                               ;; "M-i" "M-t" "<f1>" "M-[" "M-["
+                               "<f1>" "<f2>" "<f3>" "<f4>" "<f5>" "<f6>"
+                               "<f7>" "<f8>" "<f9>" "<f10>" "<f11>" "<f12>"
+                               "M-<f1>" "M-<f2>" "M-<f3>" "M-<f4>" "M-<f5>" "M-<f6>"
+                               "M-<f7>" "M-<f8>" "M-<f9>" "M-<f10>" "M-<f11>" "M-<f12>"
+                               "M-1" "M-2" "M-3" "M-4" "M-5" "M-6" "M-7" "M-8" "M-9" "M-0"
+                               "M-!" "M-\"" "M-#" "M-$" "M-%" "M-&" "M-'" "M--" "M-=" "M-^" "M-~" "M-|"
+                               "M-{" "M-}" "M-;" "M-:" "M-," "M-." "M-<" "M->" "M-_"
+                               "M-a" "M-b" "M-c" "M-d" "M-e" "M-f" "M-g" "M-h" "M-i" "M-j" "M-k" "M-l"
+                               "M-m" "M-n" "M-p" "M-q" "M-r" "M-s" "M-t" "M-u" "M-v" "M-w" "M-z"
+                               ))
   :bind
   (vterm-mode-map
-   ("C-h" . vterm-send-C-h)
-   ("C-g" . vterm-send-C-g)
+   ("C-h" . (lambda () (interactive) (vterm-send-key "h" nil nil t)))
+   ("C-g" . (lambda () (interactive) (vterm-send-key "g" nil nil t)))
    ("M-[" . vterm-toggle-backward)
    ("M-]" . vterm-toggle-forward))
   (chpn-function-prefix
