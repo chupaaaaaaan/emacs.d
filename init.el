@@ -576,6 +576,8 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (recentf-mode . t)
   (recentf-max-saved-items . 20000000)
   (recentf-auto-cleanup . 'never)
+  :hook
+  (auto-save-hook . recentf-save-list)
   :config
   (dolist (pattern `(,user-emacs-directory "/tmp/"))
     (add-to-list 'recentf-exclude pattern)))
