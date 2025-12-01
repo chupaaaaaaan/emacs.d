@@ -1563,6 +1563,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   :config
   (leaf consult-hoogle :ensure t))
 
+(leaf cabal-mode :ensure t)
+
 (leaf restclient :ensure t
   :config
   (leaf ob-restclient :ensure t))
