@@ -387,7 +387,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    :package init
    ("g" . golden-ratio-mode))
   :custom
-  ;; (golden-ratio-mode . t)
+  (golden-ratio-mode . t)
   (golden-ratio-extra-commands . '(ace-window
                                    projectile-vc
                                    persp-list-buffers
