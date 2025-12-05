@@ -1509,7 +1509,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (tsx-ts-mode-hook        . lsp-deferred)
   (terraform-mode-hook     . lsp-deferred)
   (sh-mode-hook            . lsp-deferred)
-  (python-mode-hook        . lsp-deferred)
+  (python-base-mode-hook   . lsp-deferred)
   :config
   (leaf lsp-ui :ensure t
     ;; :custom-face
@@ -1606,16 +1606,14 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (treesit-font-lock-level . 4)
   :config
   (leaf treesit-auto :ensure t
-    :defun (global-treesit-auto-mode)
+    :defun (global-treesit-auto-mode
+            treesit-auto-add-to-auto-mode-alist)
     :require t
     :custom
     (treesit-auto-install . 'prompt)
-    (treesit-auto-langs . '(tsx typescript json))
-    :mode
-    ("\\.ts\\'" . typescript-ts-mode)
-    ("\\.tsx\\'" . tsx-ts-mode)
-    ("\\.json\\'" . json-ts-mode)
+    (treesit-auto-langs . '(python tsx typescript json))
     :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)))
 
 (leaf elm-mode :ensure t
@@ -1626,12 +1624,14 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf lsp-pyright :ensure t
   :custom
+  (lsp-pyright-type-checking-mode . "strict")
   (lsp-pyright-python-executable-cmd . "python3"))
 
 (leaf python
   :custom
   (python-shell-interpreter . "python3")
-  (python-indent-guess-indent-offset-verbose . nil))
+  (python-indent-guess-indent-offset-verbose . nil)
+  (python-indent-offset))
 
 (leaf apache-mode :ensure t)
 
