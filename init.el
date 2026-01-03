@@ -720,7 +720,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (anzu-deactivate-region . t)
   (anzu-search-threshold . 1000))
 
-(leaf go-translate :ensure t
+(leaf gt :ensure t
+  ;; TODO: ちゃんと動作するように設定見直す
+  :disabled t
   :defvar (gt-default-translator
            gt-prompt-map
            gt-posframe-pop-render-timeout)
