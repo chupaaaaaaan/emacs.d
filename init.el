@@ -338,7 +338,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
            (selection (completing-read "Font size: " (mapcar 'number-to-string candidates)))
            (h (round (* (string-to-number selection) 10))))
       (chpn/set-font h)))
-  (chpn/set-font 180))
+  (chpn/set-font (* my:default-font-size 10)))
 
 (leaf mule
   :custom
