@@ -387,7 +387,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    :package init
    ("g" . golden-ratio-mode))
   :custom
-  (golden-ratio-mode . t)
+  (golden-ratio-mode . nil)
   (golden-ratio-extra-commands . '(ace-window
                                    projectile-vc
                                    persp-list-buffers
@@ -1685,7 +1685,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("<tab>" . sqlformat-buffer)))
 
 (leaf vterm :ensure t vterm-toggle
-  :defvar (vterm-keymap-exceptions)
+  :defvar (vterm-keymap-exceptions
+           chpn/vterm-slot-width)
+  :defun (chpn/vterm--buffer-p
+          chpn/vterm--find-any-vterm-window
+          chpn/vterm--normalize-to-right-slot
+          chpn/vterm--right-slot-window)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>" "M-[" "M-["))
@@ -1735,7 +1740,70 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
              (vterm))))
         (buf (if arg
                  (pop-to-buffer buf)
-               (switch-to-buffer buf)))))))
+               (switch-to-buffer buf))))))
+
+  (defcustom chpn/vterm-slot-width 80
+    "Width (columns) of the vterm slot on the right."
+    :group 'vterm-toggle
+    :type 'integer)
+
+  (defun chpn/vterm--buffer-p (buf)
+    (with-current-buffer buf
+      (derived-mode-p 'vterm-mode)))
+
+  (defun chpn/vterm--find-any-vterm-window ()
+    (seq-find (lambda (w) (chpn/vterm--buffer-p (window-buffer w)))
+              (window-list nil 'no-minibuf)))
+
+  (defun chpn/vterm--right-slot-window ()
+    "Get or create the dedicated right-side slot window for vterm."
+    (or
+     (seq-find (lambda (w) (window-parameter w 'chpn/vterm-slot))
+               (window-list nil 'no-minibuf))
+     (let ((w (display-buffer-in-side-window
+               (get-buffer-create " *my-vterm-slot-placeholder*")
+               `((side . right)
+                 (slot . 0)
+                 (window-width . ,chpn/vterm-slot-width)
+                 (window-parameters . ((chpn/vterm-slot . t)
+                                       (no-other-window . t)
+                                       (no-delete-other-windows . t)))))))
+       (set-window-parameter w 'chpn/vterm-slot t)
+       w)))
+
+  (defun chpn/vterm--normalize-to-right-slot (&optional select)
+    "Force a vterm buffer into the right slot. If SELECT non-nil, select it."
+    (let* ((vwin (chpn/vterm--find-any-vterm-window))
+           (vbuf (and vwin (window-buffer vwin))))
+      (when (buffer-live-p vbuf)
+        (let ((slot (chpn/vterm--right-slot-window)))
+          (set-window-parameter slot 'chpn/vterm-slot t)
+          (set-window-parameter slot 'no-other-window t)
+          (set-window-parameter slot 'no-delete-other-windows t)
+
+          (set-window-buffer slot vbuf)
+
+          ;; 同じ vterm バッファが他所に出ていたら閉じる（1スロット運用）
+          (dolist (w (get-buffer-window-list vbuf nil t))
+            (unless (eq w slot)
+              (delete-window w)))
+
+          (when select
+            (select-window slot))))))
+
+  (defun chpn/vterm-toggle--around (orig &rest args)
+    "Around advice for vterm-toggle: normalize to right slot, and select on show."
+    (let ((had-vterm (chpn/vterm--find-any-vterm-window)))
+      (prog1 (apply orig args)
+        ;; show/hide 後に正規化
+        (let ((has-vterm (chpn/vterm--find-any-vterm-window)))
+          ;; 「無かった→出た」時だけポイント移動
+          (chpn/vterm--normalize-to-right-slot (and (not had-vterm) has-vterm))))))
+
+  :advice
+  (:around vterm-toggle         chpn/vterm-toggle--around)
+  (:around vterm-toggle-show    chpn/vterm-toggle--around)
+  (:around vterm-toggle-cd-show chpn/vterm-toggle--around))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
