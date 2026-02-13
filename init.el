@@ -1800,10 +1800,19 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
           ;; 「無かった→出た」時だけポイント移動
           (chpn/vterm--normalize-to-right-slot (and (not had-vterm) has-vterm))))))
 
+  (defun chpn/golden-ratio-refresh (&rest _)
+    "Re-run golden-ratio after window changes settle."
+    (when (bound-and-true-p golden-ratio-mode)
+      (run-with-idle-timer 0 nil #'golden-ratio)))
+
   :advice
   (:around vterm-toggle         chpn/vterm-toggle--around)
   (:around vterm-toggle-show    chpn/vterm-toggle--around)
-  (:around vterm-toggle-cd-show chpn/vterm-toggle--around))
+  (:around vterm-toggle-cd-show chpn/vterm-toggle--around)
+
+  (:after  vterm-toggle         chpn/golden-ratio-refresh)
+  (:after  vterm-toggle-show    chpn/golden-ratio-refresh)
+  (:after  vterm-toggle-cd-show chpn/golden-ratio-refresh))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
