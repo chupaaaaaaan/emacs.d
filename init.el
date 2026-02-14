@@ -1792,13 +1792,13 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
             (select-window slot))))))
 
   (defun chpn/vterm-toggle--around (orig &rest args)
-    "Around advice for vterm-toggle: normalize to right slot, and select on show."
-    (let ((had-vterm (chpn/vterm--find-any-vterm-window)))
+    "Force vterm into right slot. Focus it on SHOW, do nothing on HIDE."
+    (let ((from-vterm (derived-mode-p 'vterm-mode)))  ;; 呼び出し前が vterm か？
       (prog1 (apply orig args)
-        ;; show/hide 後に正規化
-        (let ((has-vterm (chpn/vterm--find-any-vterm-window)))
-          ;; 「無かった→出た」時だけポイント移動
-          (chpn/vterm--normalize-to-right-slot (and (not had-vterm) has-vterm))))))
+        ;; いつでも正規化（表示は右に収束）
+        (chpn/vterm--normalize-to-right-slot
+         ;; SHOW のときだけフォーカス
+         (not from-vterm)))))
 
   (defun chpn/golden-ratio-refresh (&rest _)
     "Re-run golden-ratio after window changes settle."
