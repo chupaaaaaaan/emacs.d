@@ -556,6 +556,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (dashboard-items . '((recents   . 7)
                        (agenda    . 7)
                        (bookmarks . 15)))
+  (dashboard-match-agenda-entry . "-STYLE=\"habit\"")
   :bind
   ("<f6>" . dashboard-open)
   :config
