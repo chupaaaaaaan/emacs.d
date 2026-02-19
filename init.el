@@ -1765,10 +1765,7 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
                (get-buffer-create " *my-vterm-slot-placeholder*")
                `((side . right)
                  (slot . 0)
-                 (window-width . ,chpn/vterm-slot-width)
-                 (window-parameters . ((chpn/vterm-slot . t)
-                                       (no-other-window . t)
-                                       (no-delete-other-windows . t)))))))
+                 (window-width . ,chpn/vterm-slot-width)))))
        (set-window-parameter w 'chpn/vterm-slot t)
        w)))
 
@@ -1780,7 +1777,7 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
         (let ((slot (chpn/vterm--right-slot-window)))
           (set-window-parameter slot 'chpn/vterm-slot t)
           (set-window-parameter slot 'no-other-window t)
-          (set-window-parameter slot 'no-delete-other-windows t)
+          ;; (set-window-parameter slot 'no-delete-other-windows t)
 
           (set-window-buffer slot vbuf)
 
