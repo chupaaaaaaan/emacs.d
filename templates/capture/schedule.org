@@ -1,3 +1,5 @@
 * TODO %?
 SCHEDULED: %^{予定日時を入力してください}T
-%U
+:PROPERTIES:
+:CREATED: %U
+:END:
