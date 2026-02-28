@@ -1688,9 +1688,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 (leaf vterm :ensure t vterm-toggle
   :defvar (vterm-keymap-exceptions
            chpn/vterm-slot-width)
-  :defun (chpn/vterm--buffer-p
-          chpn/vterm--find-any-vterm-window
-          chpn/vterm--normalize-to-right-slot
+  :defun (chpn/vterm--display-in-slot
           chpn/vterm--right-slot-window)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
@@ -1710,51 +1708,44 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("v" . chpn/vterm))
   :preface
   (defun chpn/vterm (&optional arg)
-    "補完ミニバッファ上で、既存のvtermバッファを選択するか、新しいvtermバッファを開く。
-候補:
-- `New vterm'  名前を指定して新規作成
-- 既存の vterm バッファ
-C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
+    "Open/select vterm in the right side window.
+
+If no vterm exists:
+  - without C-u: create automatically
+  - with C-u:    prompt for name
+
+If vterms exist:
+  - select from completion (including \"New vterm\")
+
+Always move focus to the right slot."
     (interactive "P")
-    (let* ((existing (mapcar (lambda (buf)
-                               (cons (buffer-name buf) buf))
-                             (seq-filter (lambda (buf)
-                                           (with-current-buffer buf (derived-mode-p 'vterm-mode)))
-                                         (buffer-list))))
-           (special  '(("New vterm" . :new-named)))
-           (cands    (append existing special))
-           (completion-extra-properties
-            (list :annotation-function
-                  (lambda (cand)
-                    (pcase (cdr (assoc cand cands))
-                      (:new-named "  create (prompt)")
-                      (buf (with-current-buffer buf
-                             (concat "  " default-directory)))))))
-           (choice (completing-read "vterm: " (mapcar #'car cands) nil t)))
-      (pcase (cdr (assoc choice cands))
-        (:new-named
-         (let* ((default (generate-new-buffer-name "*vterm*"))
-                (name (read-string "Buffer name: " default))
-                (vterm-buffer-name name))
-           (if arg
-               (vterm-other-window)
-             (vterm))))
-        (buf (if arg
-                 (pop-to-buffer buf)
-               (switch-to-buffer buf))))))
+    (let* ((existing (seq-filter (lambda (buf) (with-current-buffer buf
+                                                 (derived-mode-p 'vterm-mode)))
+                                 (buffer-list))))
+      (cl-labels
+          ((create-new ()
+             (let* ((name (if arg (read-string "Buffer name: "
+                                               (generate-new-buffer-name "*vterm*"))
+                            (generate-new-buffer-name "*vterm*")))
+                    (vterm-buffer-name name)
+                    (slot (chpn/vterm--right-slot-window)))
+               (select-window slot)
+               (vterm)
+               (chpn/vterm--display-in-slot (current-buffer) t))))
+
+        (if (null existing)
+            (create-new)
+          (let* ((bufnames (append (mapcar #'buffer-name existing) '("New vterm")))
+                 (choice (completing-read "vterm: " bufnames nil t)))
+            (if (string= choice "New vterm")
+                (create-new)
+              (let ((buf (get-buffer choice)))
+                (chpn/vterm--display-in-slot buf t))))))))
 
   (defcustom chpn/vterm-slot-width 80
     "Width (columns) of the vterm slot on the right."
     :group 'vterm-toggle
     :type 'integer)
-
-  (defun chpn/vterm--buffer-p (buf)
-    (with-current-buffer buf
-      (derived-mode-p 'vterm-mode)))
-
-  (defun chpn/vterm--find-any-vterm-window ()
-    (seq-find (lambda (w) (chpn/vterm--buffer-p (window-buffer w)))
-              (window-list nil 'no-minibuf)))
 
   (defun chpn/vterm--right-slot-window ()
     "Get or create the dedicated right-side slot window for vterm."
@@ -1769,34 +1760,26 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
        (set-window-parameter w 'chpn/vterm-slot t)
        w)))
 
-  (defun chpn/vterm--normalize-to-right-slot (&optional select)
-    "Force a vterm buffer into the right slot. If SELECT non-nil, select it."
-    (let* ((vwin (chpn/vterm--find-any-vterm-window))
-           (vbuf (and vwin (window-buffer vwin))))
-      (when (buffer-live-p vbuf)
-        (let ((slot (chpn/vterm--right-slot-window)))
-          (set-window-parameter slot 'chpn/vterm-slot t)
-          (set-window-parameter slot 'no-other-window t)
-          ;; (set-window-parameter slot 'no-delete-other-windows t)
+  (defun chpn/vterm--display-in-slot (buf &optional select)
+    (let ((slot (chpn/vterm--right-slot-window)))
+      (set-window-buffer slot buf)
 
-          (set-window-buffer slot vbuf)
+      ;; 他所に表示されていたら削除
+      (dolist (w (get-buffer-window-list buf nil t))
+        (unless (eq w slot)
+          (delete-window w)))
 
-          ;; 同じ vterm バッファが他所に出ていたら閉じる（1スロット運用）
-          (dolist (w (get-buffer-window-list vbuf nil t))
-            (unless (eq w slot)
-              (delete-window w)))
+      ;; 幅補正
+      (while (< (window-body-width slot) chpn/vterm-slot-width)
+        (window-resize slot 1 t))
+      (while (> (window-body-width slot) chpn/vterm-slot-width)
+        (window-resize slot -1 t))
+      (when (fboundp 'vterm--refresh-size)
+        (with-current-buffer buf
+          (vterm--refresh-size)))
 
-          (when select
-            (select-window slot))))))
-
-  (defun chpn/vterm-toggle--around (orig &rest args)
-    "Force vterm into right slot. Focus it on SHOW, do nothing on HIDE."
-    (let ((from-vterm (derived-mode-p 'vterm-mode)))  ;; 呼び出し前が vterm か？
-      (prog1 (apply orig args)
-        ;; いつでも正規化（表示は右に収束）
-        (chpn/vterm--normalize-to-right-slot
-         ;; SHOW のときだけフォーカス
-         (not from-vterm)))))
+      (when select
+        (select-window slot))))
 
   (defun chpn/golden-ratio-refresh (&rest _)
     "Re-run golden-ratio after window changes settle."
@@ -1804,13 +1787,7 @@ C-u を付けると選んだ候補を *別ウィンドウ* で開く。"
       (run-with-idle-timer 0 nil #'golden-ratio)))
 
   :advice
-  (:around vterm-toggle         chpn/vterm-toggle--around)
-  (:around vterm-toggle-show    chpn/vterm-toggle--around)
-  (:around vterm-toggle-cd-show chpn/vterm-toggle--around)
-
-  (:after  vterm-toggle         chpn/golden-ratio-refresh)
-  (:after  vterm-toggle-show    chpn/golden-ratio-refresh)
-  (:after  vterm-toggle-cd-show chpn/golden-ratio-refresh))
+  (:after vterm-toggle chpn/golden-ratio-refresh))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
