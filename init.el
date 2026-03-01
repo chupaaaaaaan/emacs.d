@@ -1685,24 +1685,20 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (sql-mode-map
    ("<tab>" . sqlformat-buffer)))
 
-(leaf vterm :ensure t vterm-toggle
+(leaf vterm :ensure t
   :defvar (vterm-keymap-exceptions
            chpn/vterm-slot-width)
   :defun (chpn/vterm--display-in-slot
-          chpn/vterm--right-slot-window)
+          chpn/vterm--origin-dir
+          chpn/vterm--right-slot-window
+          project-root)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>" "M-[" "M-["))
   (vterm-buffer-name-string . "vterm: %s")
-  (vterm-toggle-scope . 'project)
-  (vterm-toggle-hide-method . nil)
   :bind
-  ("M-0" . vterm-toggle)
   (vterm-mode-map
-   ("M-0" . vterm-toggle)
-   ("C-h" . vterm-send-backspace)
-   ("M-[" . vterm-toggle-backward)
-   ("M-]" . vterm-toggle-forward))
+   ("C-h" . vterm-send-backspace))
   (chpn-function-prefix
    :package init
    ("v" . chpn/vterm))
@@ -1719,7 +1715,8 @@ If vterms exist:
 
 Always move focus to the right slot."
     (interactive "P")
-    (let* ((existing (seq-filter (lambda (buf) (with-current-buffer buf
+    (let* ((origin (current-buffer))
+           (existing (seq-filter (lambda (buf) (with-current-buffer buf
                                                  (derived-mode-p 'vterm-mode)))
                                  (buffer-list))))
       (cl-labels
@@ -1730,7 +1727,8 @@ Always move focus to the right slot."
                     (vterm-buffer-name name)
                     (slot (chpn/vterm--right-slot-window)))
                (select-window slot)
-               (vterm)
+               (let ((default-directory (chpn/vterm--origin-dir origin)))
+                 (vterm))
                (chpn/vterm--display-in-slot (current-buffer) t))))
 
         (if (null existing)
@@ -1746,6 +1744,17 @@ Always move focus to the right slot."
     "Width (columns) of the vterm slot on the right."
     :group 'vterm-toggle
     :type 'integer)
+
+  (defun chpn/vterm--origin-dir (origin-buffer)
+    "Return project root of ORIGIN-BUFFER, or its default-directory."
+    (with-current-buffer origin-buffer
+      (let* ((dir default-directory)
+             (proj (let ((default-directory dir))
+                     (project-current nil))))
+        (cond
+         (proj (project-root proj))
+         ((file-directory-p dir) dir)
+         (t default-directory)))))
 
   (defun chpn/vterm--right-slot-window ()
     "Get or create the dedicated right-side slot window for vterm."
