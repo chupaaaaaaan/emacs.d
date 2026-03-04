@@ -1693,51 +1693,27 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           chpn/vterm--right-slot-window
           project-root)
   :custom
-  (vterm-shell-args . '("-lc" "exec tmux new-session -A -s main"))
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
-  (vterm-buffer-name-string . "vterm: %s")
   :bind
   (chpn-function-prefix
    :package init
    ("v" . chpn/vterm))
   :preface
-  (defun chpn/vterm (&optional arg)
-    "Open/select vterm in the right side window.
+  (defconst chpn/vterm-main-buffer-name "*vterm*"
+    "Single vterm buffer used by chpn/vterm.")
 
-If no vterm exists:
-  - without C-u: create automatically
-  - with C-u:    prompt for name
-
-If vterms exist:
-  - select from completion (including \"New vterm\")
-
-Always move focus to the right slot."
-    (interactive "P")
-    (let* ((origin (current-buffer))
-           (existing (seq-filter (lambda (buf) (with-current-buffer buf
-                                                 (derived-mode-p 'vterm-mode)))
-                                 (buffer-list))))
-      (cl-labels
-          ((create-new ()
-             (let* ((name (if arg (read-string "Buffer name: "
-                                               (generate-new-buffer-name "*vterm*"))
-                            (generate-new-buffer-name "*vterm*")))
-                    (vterm-buffer-name name)
-                    (slot (chpn/vterm--right-slot-window)))
-               (select-window slot)
-               (let ((default-directory (chpn/vterm--origin-dir origin)))
-                 (vterm))
-               (chpn/vterm--display-in-slot (current-buffer) t))))
-
-        (if (null existing)
-            (create-new)
-          (let* ((bufnames (append (mapcar #'buffer-name existing) '("New vterm")))
-                 (choice (completing-read "vterm: " bufnames nil t)))
-            (if (string= choice "New vterm")
-                (create-new)
-              (let ((buf (get-buffer choice)))
-                (chpn/vterm--display-in-slot buf t))))))))
+  (defun chpn/vterm ()
+    "Show the single vterm buffer in the right side window (create if needed)."
+    (interactive)
+    (let* ((slot (chpn/vterm--right-slot-window))
+           (buf  (get-buffer chpn/vterm-main-buffer-name)))
+      (select-window slot)
+      (if (buffer-live-p buf)
+          (chpn/vterm--display-in-slot buf t)
+        (let ((vterm-buffer-name chpn/vterm-main-buffer-name))
+          (vterm)
+          (chpn/vterm--display-in-slot (current-buffer) t)))))
 
   (defcustom chpn/vterm-slot-width 80
     "Width (columns) of the vterm slot on the right."
