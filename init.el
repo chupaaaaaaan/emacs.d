@@ -1693,12 +1693,11 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           chpn/vterm--right-slot-window
           project-root)
   :custom
-  (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y" ;; default setting
-                               "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>" "M-[" "M-["))
+  (vterm-shell-args . '("-lc" "exec tmux new-session -A -s main"))
+  (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
+                               "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
   (vterm-buffer-name-string . "vterm: %s")
   :bind
-  (vterm-mode-map
-   ("C-h" . vterm-send-backspace))
   (chpn-function-prefix
    :package init
    ("v" . chpn/vterm))
