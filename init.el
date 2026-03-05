@@ -1686,12 +1686,9 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("<tab>" . sqlformat-buffer)))
 
 (leaf vterm :ensure t
-  :defvar (vterm-keymap-exceptions
-           chpn/vterm-slot-width)
+  :defvar (chpn/vterm-slot-width)
   :defun (chpn/vterm--display-in-slot
-          chpn/vterm--origin-dir
-          chpn/vterm--right-slot-window
-          project-root)
+          chpn/vterm--right-slot-window)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
@@ -1719,17 +1716,6 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     "Width (columns) of the vterm slot on the right."
     :group 'vterm-toggle
     :type 'integer)
-
-  (defun chpn/vterm--origin-dir (origin-buffer)
-    "Return project root of ORIGIN-BUFFER, or its default-directory."
-    (with-current-buffer origin-buffer
-      (let* ((dir default-directory)
-             (proj (let ((default-directory dir))
-                     (project-current nil))))
-        (cond
-         (proj (project-root proj))
-         ((file-directory-p dir) dir)
-         (t default-directory)))))
 
   (defun chpn/vterm--right-slot-window ()
     "Get or create the dedicated right-side slot window for vterm."
