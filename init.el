@@ -56,6 +56,19 @@
 
   (defun chpn/from-dir-jars (jar-file) (expand-file-name jar-file chpn/dir-jars))
 
+  (defvar chpn/previous-window nil)
+
+  (defun chpn/record-previous-window (&rest _)
+    "別のウインドウに切り替える前のウインドウを記録する。"
+    (setq chpn/previous-window (selected-window)))
+
+  (defun chpn/restore-previous-window ()
+    "記録しておいたウインドウにフォーカスを戻す。"
+    (interactive)
+    (if (window-live-p chpn/previous-window)
+        (select-window chpn/previous-window)
+      (message "Previous window not found.")))
+
   ;; Directory setup
   (dolist (dir (list chpn/dir-jars chpn/dir-pkg-local))
     (unless (file-directory-p dir)
@@ -1457,7 +1470,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   :bind
   ("M-1" . treemacs-select-window)
   (treemacs-mode-map
-   ("M-1" . chpn/treemacs-restore-previous-window))
+   ("M-1" . chpn/restore-previous-window))
   :custom
   (treemacs-is-never-other-window . t)
   (treemacs-no-delete-other-windows . t)
@@ -1467,18 +1480,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (treemacs-fringe-indicator-mode . t)
   (treemacs-git-mode . 'simple)
   (treemacs-project-follow-cleanup . t)
-  :preface
-  (defvar chpn/treemacs-previous-window nil)
-  (defun chpn/treemacs-record-previous-window (&rest _)
-    "Treemacs ウインドウに切り替える前のウインドウを記録する。"
-    (setq chpn/treemacs-previous-window (selected-window)))
-  (advice-add 'treemacs-select-window :before #'chpn/treemacs-record-previous-window)
-  (defun chpn/treemacs-restore-previous-window ()
-    "記録しておいたウインドウ（Treemacs 移動前）にフォーカスを戻す。"
-    (interactive)
-    (if (window-live-p chpn/treemacs-previous-window)
-        (select-window chpn/treemacs-previous-window)
-      (message "Previous window not found.")))
+  :advice
+  (:before treemacs-select-window chpn/record-previous-window)
   :config
   (leaf treemacs-projectile :ensure t
     :bind
@@ -1693,9 +1696,9 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
   :bind
-  (chpn-function-prefix
-   :package init
-   ("v" . chpn/vterm))
+  ("M-0" . chpn/vterm)
+  (vterm-mode-map
+   ("M-0" . chpn/restore-previous-window))
   :preface
   (defconst chpn/vterm-main-buffer-name "*vterm*"
     "Single vterm buffer used by chpn/vterm.")
@@ -1726,13 +1729,18 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
                (get-buffer-create " *my-vterm-slot-placeholder*")
                `((side . right)
                  (slot . 0)
-                 (window-width . ,chpn/vterm-slot-width)))))
+                 (window-width . ,chpn/vterm-slot-width)
+                 ;; (no-delete-other-windows . t)
+                 (no-other-window . t)))))
        (set-window-parameter w 'chpn/vterm-slot t)
        w)))
 
   (defun chpn/vterm--display-in-slot (buf &optional select)
     (let ((slot (chpn/vterm--right-slot-window)))
       (set-window-buffer slot buf)
+      (set-window-parameter slot 'chpn/vterm-slot t)
+      ;; (set-window-parameter slot 'no-delete-other-windows t)
+      (set-window-parameter slot 'no-other-window t)
 
       ;; 他所に表示されていたら削除
       (dolist (w (get-buffer-window-list buf nil t))
@@ -1757,7 +1765,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
       (run-with-idle-timer 0 nil #'golden-ratio)))
 
   :advice
-  (:after vterm-toggle chpn/golden-ratio-refresh))
+  (:after vterm-toggle chpn/golden-ratio-refresh)
+  (:before chpn/vterm chpn/record-previous-window))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
