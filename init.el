@@ -992,8 +992,23 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-after-todo-statistics-hook . chpn/org-summary-todo)
   (org-after-tags-change-hook . chpn/org-cookie-data-by-project)
 
+  :advice
+  (:around org-export-to-buffer chpn/org-export-to-buffer-with-mode-advice)
+
   :preface
   (define-prefix-command 'chpn-org-prefix)
+  (defvar chpn/org-export-buffer-mode-alist
+    '((md    . markdown-mode)
+      (ascii . text-mode))
+    "Alist from Org export backend to major mode for export buffers.")
+  (defun chpn/org-export-to-buffer-with-mode-advice (orig-fun backend buffer-or-name
+                                                              &optional async subtreep visible-only body-only ext-plist post-process)
+    (funcall orig-fun backend buffer-or-name async subtreep visible-only body-only ext-plist
+             (lambda ()
+               (when post-process (funcall post-process))
+               (let ((mode (alist-get backend chpn/org-export-buffer-mode-alist)))
+                 (when (and mode (fboundp mode))
+                   (funcall mode))))))
   (defconst chpn/today-cutoff-hour 6)
   (defun chpn/org-cookie-data-by-project ()
     "TODOエントリにPROJECTタグがついている場合は、COOKIE_DATA プロパティに \"todo\" を設定する。
@@ -1189,6 +1204,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
       (goto-char (point-max))))
 
   (leaf org-re-reveal :ensure t)
+  (leaf ox-gfm :ensure t
+    :config
+    (add-to-list 'chpn/org-export-buffer-mode-alist '(gfm . markdown-mode)))
+  (leaf ox-textile :ensure t
+    :config
+    (add-to-list 'chpn/org-export-buffer-mode-alist '(textile . textile-mode)))
   (leaf company-org-block :ensure t))
 
 (leaf calendar
@@ -1619,6 +1640,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   :require yaml-mode)
 
 (leaf markdown-mode :ensure t)
+
+(leaf textile-mode :ensure t)
 
 (leaf js
   :custom
