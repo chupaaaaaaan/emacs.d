@@ -1722,6 +1722,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   ("M-0" . chpn/vterm)
   (vterm-mode-map
    ("M-0" . chpn/restore-previous-window))
+
+  :advice
+  (:after  chpn/restore-previous-window chpn/golden-ratio-refresh)
+  (:after  chpn/vterm chpn/golden-ratio-refresh)
+  (:before chpn/vterm chpn/record-previous-window)
+
   :preface
   (defconst chpn/vterm-main-buffer-name "*vterm*"
     "Single vterm buffer used by chpn/vterm.")
@@ -1785,11 +1791,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (defun chpn/golden-ratio-refresh (&rest _)
     "Re-run golden-ratio after window changes settle."
     (when (bound-and-true-p golden-ratio-mode)
-      (run-with-idle-timer 0 nil #'golden-ratio)))
-
-  :advice
-  (:after vterm-toggle chpn/golden-ratio-refresh)
-  (:before chpn/vterm chpn/record-previous-window))
+      (run-with-idle-timer 0 nil #'golden-ratio))))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
