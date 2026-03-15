@@ -376,6 +376,14 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
     :custom
     (mozc-candidate-style . 'posframe)))
 
+(leaf fcitx :ensure t
+  :defvar (fcitx-remote-command)
+  :custom
+  (fcitx-use-dbus . 'fcitx5)
+  :config
+  (setq fcitx-remote-command "fcitx5-remote")
+  (fcitx-default-setup))
+
 (leaf exec-path-from-shell :ensure t
   :if (or (eq system-type 'darwin)
           (eq system-type 'gnu/linux))
