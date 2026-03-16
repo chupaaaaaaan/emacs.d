@@ -69,6 +69,40 @@
         (select-window chpn/previous-window)
       (message "Previous window not found.")))
 
+  (defun chpn/file-name-parent-directory-like-input (input)
+    "INPUT の末尾 ../ を 1 回だけ解釈して親ディレクトリへ戻した文字列を返す。
+なるべく元の表記を保つ。ホーム配下は ~ を維持するが、
+ホームより上に行った場合は実パスのまま返す。
+戻れない場合は nil を返す。"
+    (when (string-suffix-p "../" input)
+      (let* ((base (substring input 0 -3)) ; 末尾の ../ を落とす
+             (base (if (string-empty-p base) "./" base)))
+        (cond
+         ;; TRAMP/特殊ファイル名は雑に触らず、expand-file-name に任せる。
+         ;; ただし ~ 展開は抑えたいので abbreviate-file-name で戻す。
+         ((file-remote-p base)
+          (let ((parent (file-name-directory
+                         (directory-file-name
+                          (expand-file-name base)))))
+            (when parent
+              (file-name-as-directory parent))))
+
+         ;; ローカルパス
+         (t
+          (let* ((expanded-base (expand-file-name base))
+                 (parent (file-name-directory
+                          (directory-file-name expanded-base))))
+            (when parent
+              (let* ((home (expand-file-name "~/"))
+                     ;; HOME 配下なら ~ 表記に戻す。
+                     ;; ただし parent が HOME 自身なら "~/"
+                     ;; HOME より上なら実パスのまま。
+                     (display
+                      (if (string-prefix-p home parent)
+                          (abbreviate-file-name parent)
+                        parent)))
+                (file-name-as-directory display)))))))))
+
   ;; Directory setup
   (dolist (dir (list chpn/dir-jars chpn/dir-pkg-local))
     (unless (file-directory-p dir)
@@ -621,6 +655,9 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 (leaf amx :ensure t)
 
 (leaf vertico :ensure t
+  :defun (chpn/minibuffer-file-name-p
+          chpn/minibuffer-handle-parent-directory
+          chpn/minibuffer-replace-contents)
   :bind
   (vertico-map
    :package vertico
@@ -629,13 +666,47 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
    ("RET"   . vertico-directory-enter)
    ("DEL"   . vertico-directory-delete-char)
    ("C-h"   . vertico-directory-delete-char)
-   ("M-DEL" . vertico-directory-delete-word)
-   ("M-C-h"   . vertico-directory-delete-char))
+   ("M-DEL" . vertico-directory-delete-word))
   :custom
   (vertico-mode . t)
   (read-extended-command-predicate . #'command-completion-default-include-p)
   :hook
-  (rfn-eshadow-update-overlay-hook . vertico-directory-tidy))
+  (rfn-eshadow-update-overlay-hook . vertico-directory-tidy)
+  (minibuffer-setup-hook . chpn/setup-minibuffer-parent-directory-handler)
+  :preface
+  (defun chpn/minibuffer-file-name-p ()
+    "現在のミニバッファがファイル名入力中なら non-nil。"
+    (let* ((md (completion-metadata
+                (minibuffer-contents-no-properties)
+                minibuffer-completion-table
+                minibuffer-completion-predicate))
+           (cat (completion-metadata-get md 'category)))
+      (eq cat 'file)))
+
+  (defun chpn/minibuffer-replace-contents (text)
+    "ミニバッファ内容を TEXT に置き換える。"
+    (delete-minibuffer-contents)
+    (insert text))
+
+  (defun chpn/minibuffer-handle-parent-directory ()
+    "ファイル名入力中、../ が完成したら親ディレクトリに置き換える。"
+    (when (and (minibufferp)
+               (chpn/minibuffer-file-name-p)
+               (eq this-command 'self-insert-command))
+      ;; 最後に入力された文字が / のときだけ見る。
+      (let ((last (char-before)))
+        (when (and last (char-equal last ?/))
+          (let* ((input (minibuffer-contents-no-properties))
+                 (parent (chpn/file-name-parent-directory-like-input input)))
+            (when parent
+              (chpn/minibuffer-replace-contents parent)))))))
+
+  (defun chpn/setup-minibuffer-parent-directory-handler ()
+    "ファイル名入力ミニバッファで ../ による親ディレクトリ移動を有効化する。"
+    (when (chpn/minibuffer-file-name-p)
+      (add-hook 'post-self-insert-hook
+                #'chpn/minibuffer-handle-parent-directory
+                nil t))))
 
 (leaf consult :ensure t
   :defvar (consult-xref)
