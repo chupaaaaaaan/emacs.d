@@ -625,10 +625,17 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (vertico-map
    :package vertico
    ("M-RET" . minibuffer-force-complete-and-exit)
-   ("M-TAB" . minibuffer-complete))
+   ("M-TAB" . minibuffer-complete)
+   ("RET"   . vertico-directory-enter)
+   ("DEL"   . vertico-directory-delete-char)
+   ("C-h"   . vertico-directory-delete-char)
+   ("M-DEL" . vertico-directory-delete-word)
+   ("M-C-h"   . vertico-directory-delete-char))
   :custom
   (vertico-mode . t)
-  (read-extended-command-predicate . #'command-completion-default-include-p))
+  (read-extended-command-predicate . #'command-completion-default-include-p)
+  :hook
+  (rfn-eshadow-update-overlay-hook . vertico-directory-tidy))
 
 (leaf consult :ensure t
   :defvar (consult-xref)
