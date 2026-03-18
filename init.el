@@ -1865,7 +1865,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
                `((side . right)
                  (slot . 0)
                  (window-width . ,chpn/vterm-slot-width)
-                 ;; (no-delete-other-windows . t)
+                 (no-delete-other-windows . t)
                  (no-other-window . t)))))
        (set-window-parameter w 'chpn/vterm-slot t)
        w)))
@@ -1874,7 +1874,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (let ((slot (chpn/vterm--right-slot-window)))
       (set-window-buffer slot buf)
       (set-window-parameter slot 'chpn/vterm-slot t)
-      ;; (set-window-parameter slot 'no-delete-other-windows t)
+      (set-window-parameter slot 'no-delete-other-windows t)
       (set-window-parameter slot 'no-other-window t)
 
       ;; 他所に表示されていたら削除
