@@ -58,16 +58,33 @@
 
   (defvar chpn/previous-window nil)
 
+  (defun chpn/side-window-p (&optional window)
+    "WINDOW が side window なら non-nil を返す。"
+    (window-parameter (or window (selected-window)) 'window-side))
+
   (defun chpn/record-previous-window (&rest _)
-    "別のウインドウに切り替える前のウインドウを記録する。"
-    (setq chpn/previous-window (selected-window)))
+    "サイドウインドウへ移動する前の通常ウインドウを記録する。
+現在ウインドウが side window の場合は記録しない。"
+    (let ((win (selected-window)))
+      (when (and (window-live-p win)
+                 (not (chpn/side-window-p win)))
+        (setq chpn/previous-window win))))
 
   (defun chpn/restore-previous-window ()
-    "記録しておいたウインドウにフォーカスを戻す。"
+    "記録しておいたウインドウへ戻す。
+戻り先が無効なら、フォールバックとして適当な live window へ移動する。
+処理後は `chpn/previous-window' を nil に戻す。"
     (interactive)
-    (if (window-live-p chpn/previous-window)
-        (select-window chpn/previous-window)
-      (message "Previous window not found.")))
+    (let ((target chpn/previous-window))
+      (setq chpn/previous-window nil)
+      (cond
+       ((window-live-p target)
+        (select-window target))
+       ((window-live-p (car (window-list)))
+        (message "Previous window not found. Moved to a fallback window.")
+        (select-window (car (window-list))))
+       (t
+        (message "Previous window not found.")))))
 
   (defun chpn/file-name-parent-directory-like-input (input)
     "INPUT の末尾 ../ を 1 回だけ解釈して親ディレクトリへ戻した文字列を返す。
