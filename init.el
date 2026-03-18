@@ -471,10 +471,13 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                   imenu-list-major-mode)))
 
 (leaf ace-window :ensure t
+  :defvar (aw-ignored-buffers)
   :bind
   ("M-o" . ace-window)
   :custom
-  (aw-dispatch-always . t))
+  (aw-dispatch-always . t)
+  :config
+  (add-to-list 'aw-ignored-buffers 'vterm-mode))
 
 (leaf follow
   :defvar (follow-mode)
