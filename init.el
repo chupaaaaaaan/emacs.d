@@ -1825,7 +1825,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
   :bind
-  ("M-0" . chpn/vterm)
+  ("M-0"   . chpn/vterm)
+  ("C-M-0" . chpn/vterm-toggle)
   (vterm-mode-map
    ("M-0" . chpn/restore-previous-window))
 
@@ -1835,6 +1836,16 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (:before chpn/vterm chpn/record-previous-window)
 
   :preface
+  (defun chpn/vterm-toggle ()
+    "Toggle the vterm side window."
+    (interactive)
+    (let ((win (seq-find (lambda (w)
+                           (window-parameter w 'chpn/vterm-slot))
+                         (window-list nil 'no-minibuf))))
+      (if (window-live-p win)
+          (delete-window win)
+        (chpn/vterm))))
+
   (defconst chpn/vterm-main-buffer-name "*vterm*"
     "Single vterm buffer used by chpn/vterm.")
 
