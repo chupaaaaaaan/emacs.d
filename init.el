@@ -80,9 +80,9 @@
       (cond
        ((window-live-p target)
         (select-window target))
-       ((window-live-p (car (window-list)))
+       ((window-live-p (car (seq-filter (lambda (w) (not (chpn/side-window-p w))) (window-list))))
         (message "Previous window not found. Moved to a fallback window.")
-        (select-window (car (window-list))))
+        (select-window (car (seq-filter (lambda (w) (not (chpn/side-window-p w))) (window-list)))))
        (t
         (message "Previous window not found.")))))
 
