@@ -670,7 +670,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :blackout t
   :custom
   (global-undo-tree-mode . t)
-  (undo-tree-history-directory-alist . `((".*" . ,(concat user-emacs-directory ".cache/")))))
+  (undo-tree-auto-save-history . nil))
 
 (leaf amx :ensure t)
 
