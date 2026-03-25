@@ -1695,6 +1695,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (lsp-ui-sideline-show-diagnostics . nil)
     (lsp-ui-sideline-show-code-actions . t)))
 
+(leaf dap-mode :ensure t
+  :defun (dap-auto-configure-mode)
+  :config
+  (dap-auto-configure-mode)
+  (leaf dap-chrome :require t))
+
 (leaf lsp-haskell :ensure t
   :custom
   (lsp-haskell-server-args . '("-d"))
@@ -1715,6 +1721,46 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (leaf consult-hoogle :ensure t))
 
 (leaf cabal-mode :ensure t)
+
+(leaf lsp-java
+  :ensure t
+  :custom
+  ;; jdtls 自体を起動する Java はシステムのJDKに固定する
+  (lsp-java-java-path . "/usr/lib/jvm/java-21-openjdk-amd64/bin/java")
+
+  ;; ヒープは少し余裕を見る
+  (lsp-java-vmargs . '("-XX:+UseParallelGC"
+                       "-XX:GCTimeRatio=4"
+                       "-XX:AdaptiveSizePolicyWeight=90"
+                       "-Dsun.zip.disableMemoryMapping=true"
+                       "-Xms256m"
+                       "-Xmx2G"))
+
+  ;; Maven関連設定
+  (lsp-java-configuration-maven-user-settings . "~/.m2/settings.xml")
+  (lsp-java-import-maven-enabled . t)
+  (lsp-java-configuration-update-build-configuration . "automatic")
+
+  ;; 軽さ優先の設定
+  (lsp-java-maven-download-sources . nil)
+  (lsp-java-eclipse-download-sources . nil)
+  (lsp-java-maven-update-snapshots . nil)
+
+  ;; 日常運用向けの設定
+  (lsp-java-save-actions-organize-imports . t)
+  (lsp-java-errors-incomplete-classpath-severity . "warning")
+  (lsp-java-autobuild-enabled . t)
+
+  ;; workspace 汚染を減らす設定
+  (lsp-java-import-exclusions
+   . ["**/node_modules/**"
+      "**/.metadata/**"
+      "**/build/**"
+      "**/dist/**"
+      "**/.git/**"])
+
+  :config
+  (leaf dap-java :require t))
 
 (leaf restclient :ensure t
   :config
