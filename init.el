@@ -1646,7 +1646,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (lsp-semantic-tokens-honor-refresh-requests . t)
   (lsp-enable-links . t)
   (lsp-rename-use-prepare . nil)
-  ;; (lsp-log-io t)
+  ;; (lsp-log-io . t)
   ;; (lsp-document-sync-method 'lsp--sync-incremental)
   (lsp-keymap-prefix . "M-l")
   :hook
