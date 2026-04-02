@@ -772,8 +772,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
   ;;; Histories
   ("C-x M-:" . consult-complex-command)
-  ("C-c h" . consult-history)
-  ("M-e"   . consult-isearch-history)
 
   ;;; Modes
   ("C-c m" . consult-mode-command)
@@ -781,8 +779,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (minibuffer-local-map
    ("M-s" . consult-history)
    ("M-r" . consult-history))
-  (isearch-mode-map
-   ("M-e" . consult-isearch-history))
   :hook
   (completion-list-mode-hook . consult-preview-at-point-mode))
 
@@ -795,7 +791,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
 
 (leaf consult-ghq :ensure t
   :bind
-  ;; ("M-s c s" . consult-ghq-switch-project)
+  ("M-s c s" . consult-ghq-switch-project)
   ("M-s c f" . consult-ghq-find)
   ("M-s c g" . consult-ghq-grep))
 
