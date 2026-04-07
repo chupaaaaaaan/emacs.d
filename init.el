@@ -1860,9 +1860,9 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("<tab>" . sqlformat-buffer)))
 
 (leaf vterm :ensure t
-  :defvar (chpn/vterm-slot-width)
+  :defvar (chpn/vterm-slot-height)
   :defun (chpn/vterm--display-in-slot
-          chpn/vterm--right-slot-window)
+          chpn/vterm--slot-window)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
@@ -1892,9 +1892,9 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     "Single vterm buffer used by chpn/vterm.")
 
   (defun chpn/vterm ()
-    "Show the single vterm buffer in the right side window (create if needed)."
+    "Show the single vterm buffer in the side window (create if needed)."
     (interactive)
-    (let* ((slot (chpn/vterm--right-slot-window))
+    (let* ((slot (chpn/vterm--slot-window))
            (buf  (get-buffer chpn/vterm-main-buffer-name)))
       (select-window slot)
       (if (buffer-live-p buf)
@@ -1903,28 +1903,29 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           (vterm)
           (chpn/vterm--display-in-slot (current-buffer) t)))))
 
-  (defcustom chpn/vterm-slot-width 80
-    "Width (columns) of the vterm slot on the right."
+  (defcustom chpn/vterm-slot-height 24
+    "Height (rows) of the vterm slot on the bottom."
     :group 'vterm-toggle
     :type 'integer)
 
-  (defun chpn/vterm--right-slot-window ()
-    "Get or create the dedicated right-side slot window for vterm."
+  (defun chpn/vterm--slot-window ()
+    "Get or create the dedicated slot window for vterm."
     (or
      (seq-find (lambda (w) (window-parameter w 'chpn/vterm-slot))
                (window-list nil 'no-minibuf))
      (let ((w (display-buffer-in-side-window
                (get-buffer-create " *my-vterm-slot-placeholder*")
-               `((side . right)
+               `((side . bottom)
                  (slot . 0)
-                 (window-width . ,chpn/vterm-slot-width)
-                 (no-delete-other-windows . t)
-                 (no-other-window . t)))))
-       (set-window-parameter w 'chpn/vterm-slot t)
+                 (window-height . ,chpn/vterm-slot-height)))))
+       (set-window-dedicated-p w t)
        w)))
 
   (defun chpn/vterm--display-in-slot (buf &optional select)
-    (let ((slot (chpn/vterm--right-slot-window)))
+    (let ((slot (chpn/vterm--slot-window)))
+      ;; 一時的にdedicated解除
+      (set-window-dedicated-p slot nil)
+
       (set-window-buffer slot buf)
       (set-window-parameter slot 'chpn/vterm-slot t)
       (set-window-parameter slot 'no-delete-other-windows t)
@@ -1936,13 +1937,16 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           (delete-window w)))
 
       ;; 幅補正
-      (while (< (window-body-width slot) chpn/vterm-slot-width)
-        (window-resize slot 1 t))
-      (while (> (window-body-width slot) chpn/vterm-slot-width)
-        (window-resize slot -1 t))
+      (while (< (window-body-height slot) chpn/vterm-slot-height)
+        (window-resize slot 1))
+      (while (> (window-body-height slot) chpn/vterm-slot-height)
+        (window-resize slot -1))
       (when (fboundp 'vterm--refresh-size)
         (with-current-buffer buf
           (vterm--refresh-size)))
+
+      ;; 再度dedicatedに戻す
+      (set-window-dedicated-p w t)
 
       (when select
         (select-window slot))))
