@@ -1860,6 +1860,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
    ("<tab>" . sqlformat-buffer)))
 
 (leaf vterm :ensure t
+  :when (display-graphic-p)
   :defvar (chpn/vterm-slot-height)
   :defun (chpn/vterm--display-in-slot
           chpn/vterm--slot-window)
