@@ -1947,7 +1947,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           (vterm--refresh-size)))
 
       ;; 再度dedicatedに戻す
-      (set-window-dedicated-p w t)
+      (set-window-dedicated-p slot t)
 
       (when select
         (select-window slot))))
