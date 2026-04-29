@@ -1801,15 +1801,10 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (treesit-font-lock-level . 4)
   :config
   (leaf treesit-auto :ensure t
-    :defun (global-treesit-auto-mode
-            treesit-auto-add-to-auto-mode-alist)
-    :require t
     :custom
     (treesit-auto-install . 'prompt)
     (treesit-auto-langs . '(python tsx typescript json))
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode)))
+    (global-treesit-auto-mode . t)))
 
 (leaf elm-mode :ensure t
   :custom
