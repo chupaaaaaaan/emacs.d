@@ -1703,16 +1703,64 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (lsp-haskell-formatting-provider . "fourmolu"))
 
 (leaf haskell-mode :ensure t
+  :defun (chpn/haskell--command-output
+          chpn/haskell--cabal-script-p)
   :custom
   (haskell-indentation-layout-offset . 4)
   (haskell-indentation-left-offset . 4)
   (haskell-indentation-starter-offset . 4)
   (haskell-indentation-where-post-offset . 4)
   (haskell-indentation-where-pre-offset . 4)
+  (haskell-process-type . 'cabal-repl)
+  (haskell-process-log . t)
+  (haskell-process-suggest-remove-import-lines . t)
+  (haskell-process-auto-import-loaded-modules . t)
+  :hook
+  (haskell-mode-hook . interactive-haskell-mode)
   :bind
   (haskell-mode-map
    ("C-c C-h" . haskell-compile)
-   ("C-c ?" . consult-hoogle))
+   ("C-c ?"   . consult-hoogle)
+   ("C-c C-s" . chpn/haskell-repl-this-file)
+   ("C-`"     . haskell-interactive-bring))
+  :preface
+  (defun chpn/haskell--command-output (program &rest args)
+    (with-temp-buffer
+      (let ((exit-code
+             (apply #'process-file
+                    program nil (current-buffer) nil args)))
+        (cons exit-code (buffer-string)))))
+
+  (defun chpn/haskell--cabal-script-p (file)
+    "Return non-nil if FILE appears to be handled as a cabal script."
+    (let* ((result (chpn/haskell--command-output
+                    "cabal" "repl" file "--dry-run"))
+           (exit-code (car result))
+           (output (cdr result)))
+      (and (= exit-code 0)
+           (not (null (string-match-p "\\bfake-package\\b" output))))))
+
+  (defun chpn/haskell-repl-this-file ()
+    "Start or reload a Haskell REPL for the current buffer.
+
+For cabal scripts, start `cabal repl FILE'.
+Otherwise delegate to `haskell-process-load-or-reload'."
+    (interactive)
+    (unless buffer-file-name
+      (user-error "This buffer is not visiting a file"))
+    (save-buffer)
+    (let ((file (file-relative-name buffer-file-name default-directory)))
+      (if (chpn/haskell--cabal-script-p file)
+          (progn
+            (message "Detected cabal script: %s" file)
+            (ignore-errors
+              (haskell-kill-session-process))
+            (let ((haskell-process-type 'cabal-repl)
+                  (haskell-process-args-cabal-repl
+                   (list file "--ghc-option=-ferror-spans")))
+              (haskell-process-load-file)))
+        (message "Delegating to default haskell-mode handling")
+        (haskell-process-load-file))))
   :config
   (leaf consult-hoogle :ensure t))
 
