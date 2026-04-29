@@ -1,4 +1,5 @@
 * TODO [0/0] %?
+SCHEDULED: %t
 :PROPERTIES:
 :COOKIE_DATA: checkbox recursive
 :CREATED: %U
