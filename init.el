@@ -519,12 +519,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (display-time-format . " %F %R ")
   (display-time-mode . t))
 
-(leaf moody :ensure t
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode)
-  (moody-replace-eldoc-minibuffer-message-function))
+;; (leaf moody :ensure t
+;;   :config
+;;   (setq x-underline-at-descent-line t)
+;;   (moody-replace-mode-line-buffer-identification)
+;;   (moody-replace-vc-mode)
+;;   (moody-replace-eldoc-minibuffer-message-function))
 
 ;; (leaf hide-mode-line :ensure t
 ;;   :hook
