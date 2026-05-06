@@ -1704,63 +1704,117 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf haskell-mode :ensure t
   :defun (chpn/haskell--command-output
-          chpn/haskell--cabal-script-p)
+          chpn/haskell--file-contains-cabal-block-p
+          chpn/haskell--command-output-contains-fake-package-p
+          chpn/haskell--cabal-script-p
+          chpn/haskell--cabal-script-session-name)
   :custom
   (haskell-indentation-layout-offset . 4)
   (haskell-indentation-left-offset . 4)
   (haskell-indentation-starter-offset . 4)
   (haskell-indentation-where-post-offset . 4)
   (haskell-indentation-where-pre-offset . 4)
-  (haskell-process-type . 'cabal-repl)
   (haskell-process-log . t)
   (haskell-process-suggest-remove-import-lines . t)
   (haskell-process-auto-import-loaded-modules . t)
   :hook
   (haskell-mode-hook . interactive-haskell-mode)
+  :advice
+  (:around haskell-session-default-name chpn/haskell--advice-session-default-name)
+  (:around haskell-process-load-file chpn/haskell--advice-cabal-script-repl)
+  (:around haskell-session-from-buffer chpn/haskell--advice-session-from-buffer)
   :bind
   (haskell-mode-map
    ("C-c C-h" . haskell-compile)
    ("C-c ?"   . consult-hoogle)
-   ("C-c C-s" . chpn/haskell-repl-this-file)
-   ("C-`"     . haskell-interactive-bring))
+   ("C-c C-d" . chpn/haskell-restart-cabal-script-session))
   :preface
+  (defvar-local chpn/haskell--cabal-script-cache nil)
   (defun chpn/haskell--command-output (program &rest args)
+    "Return (EXIT-CODE . OUTPUT) from PROGRAM ARGS."
     (with-temp-buffer
       (let ((exit-code
              (apply #'process-file
                     program nil (current-buffer) nil args)))
         (cons exit-code (buffer-string)))))
 
-  (defun chpn/haskell--cabal-script-p (file)
-    "Return non-nil if FILE appears to be handled as a cabal script."
-    (let* ((result (chpn/haskell--command-output
-                    "cabal" "repl" file "--dry-run"))
-           (exit-code (car result))
-           (output (cdr result)))
-      (and (= exit-code 0)
-           (not (null (string-match-p "\\bfake-package\\b" output))))))
+  (defun chpn/haskell--file-contains-cabal-block-p ()
+    "Return non-nil if current buffer contains a cabal script block."
+    (save-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (re-search-forward "^{- cabal:" nil t))))
 
-  (defun chpn/haskell-repl-this-file ()
-    "Start or reload a Haskell REPL for the current buffer.
+  (defun chpn/haskell--command-output-contains-fake-package-p ()
+    "Return t if `cabal repl FILE --dry-run' succeeds
+ and output contains fake-package."
+    (when buffer-file-name
+      (let* ((dir (file-name-directory buffer-file-name))
+             (file (file-name-nondirectory buffer-file-name))
+             (default-directory dir)
+             (result (chpn/haskell--command-output
+                      "cabal" "repl" file "--dry-run"))
+             (exit-code (car result))
+             (output (cdr result)))
+        (and (= exit-code 0)
+             (string-match-p "\\bfake-package\\b" output)))))
 
-For cabal scripts, start `cabal repl FILE'.
-Otherwise delegate to `haskell-process-load-or-reload'."
+  (defun chpn/haskell--cabal-script-p ()
+    "Return non-nil if current buffer should be treated as a cabal script."
+    (pcase chpn/haskell--cabal-script-cache
+      ('t t)
+      ('no nil)
+      (_
+       (let ((result
+              (or
+               ;; Cabal が script として扱った場合、dry-run 出力に fake-package が出る。
+               (chpn/haskell--command-output-contains-fake-package-p)
+               ;; 依存解決エラーなどで dry-run が失敗しても、cabal block があれば script 扱いする。
+               (chpn/haskell--file-contains-cabal-block-p))))
+         (setq chpn/haskell--cabal-script-cache (if result t 'no))
+         result))))
+
+  (defun chpn/haskell--cabal-script-session-name ()
+    (when buffer-file-name
+      (format "cabal-script:%s" (file-truename buffer-file-name))))
+
+  (defun chpn/haskell--advice-session-from-buffer (orig-fun)
+    "Do not auto-pick an existing project session for cabal scripts."
+    (unless (chpn/haskell--cabal-script-p)
+      (funcall orig-fun)))
+
+  (defun chpn/haskell--advice-session-default-name (orig-fun)
+    "Return a file-specific session name for cabal script buffers."
+      (if (chpn/haskell--cabal-script-p)
+          ;; cabal script の場合はファイル単位で分離
+          (chpn/haskell--cabal-script-session-name)
+        ;; 通常は既存ロジック
+        (funcall orig-fun)))
+
+  (defun chpn/haskell--advice-cabal-script-repl (orig-fun &rest args)
+    "If current buffer is a cabal script, force `cabal repl FILE'."
+    (if (and buffer-file-name
+             (chpn/haskell--cabal-script-p))
+        (let* ((dir (file-name-directory buffer-file-name))
+               (file (file-name-nondirectory buffer-file-name))
+               (script-args (list file "--ghc-option=-ferror-spans"))
+               (default-directory dir)
+               (haskell-process-type 'cabal-repl)
+               (haskell-process-args-cabal-repl script-args))
+          (message "[haskell] cabal script detected: %s" buffer-file-name)
+          (apply orig-fun args))
+      (apply orig-fun args)))
+
+  (defun chpn/haskell-restart-cabal-script-session ()
+    "Restart current cabal script session."
     (interactive)
-    (unless buffer-file-name
-      (user-error "This buffer is not visiting a file"))
-    (save-buffer)
-    (let ((file (file-relative-name buffer-file-name default-directory)))
-      (if (chpn/haskell--cabal-script-p file)
-          (progn
-            (message "Detected cabal script: %s" file)
-            (ignore-errors
-              (haskell-kill-session-process))
-            (let ((haskell-process-type 'cabal-repl)
-                  (haskell-process-args-cabal-repl
-                   (list file "--ghc-option=-ferror-spans")))
-              (haskell-process-load-file)))
-        (message "Delegating to default haskell-mode handling")
-        (haskell-process-load-file))))
+    (when (and (boundp 'haskell-session)
+               haskell-session
+               (chpn/haskell--cabal-script-p))
+      (haskell-session-kill t))
+    (haskell-process-load-file))
+
   :config
   (leaf consult-hoogle :ensure t))
 
