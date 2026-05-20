@@ -146,7 +146,7 @@
                        ("gnu"          . "https://elpa.gnu.org/packages/")))
   (customize-set-variable 'gnutls-algorithm-priority  "normal:-vers-tls1.3")
 
-  (package-initialize)
+  ;; (package-initialize)
 
   (unless (package-installed-p 'leaf)
     (package-refresh-contents)
