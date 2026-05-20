@@ -1305,7 +1305,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           (user-error "Journal template file `%s' not found" template-file)))
       (goto-char (point-max))))
 
-  (leaf org-re-reveal :ensure t)
+  (leaf org-re-reveal :ensure t
+    :require t)
   (leaf ox-gfm :ensure t
     :config
     (add-to-list 'chpn/org-export-buffer-mode-alist '(gfm . markdown-mode)))
