@@ -1650,7 +1650,6 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (lsp-mode-hook . lsp-enable-which-key-integration)
   (lsp-mode-hook . lsp-ui-mode)
   (elm-mode-hook           . lsp-deferred)
-  (java-mode-hook          . lsp-deferred)
   (haskell-mode-hook       . lsp-deferred)
   (js-mode-hook            . lsp-deferred)
   (typescript-ts-mode-hook . lsp-deferred)
@@ -1822,6 +1821,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 (leaf cabal-mode :ensure t)
 
 (leaf lsp-java
+  :disabled t
   :ensure t
   :custom
   ;; jdtls 自体を起動する Java はシステムのJDKに固定する
