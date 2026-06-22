@@ -1210,12 +1210,13 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (org-modern-replace-stars  . '("󰇈" "󰎥" "󰎨" "󰎫" "󰎲" "󰎯" "󰎴" "󰎷" "󰎺" "󰎽"))
     (org-modern-star           . 'replace)
     (org-priority-highest      . ?A)
-    (org-priority-lowest       . ?D)
+    (org-priority-lowest       . ?E)
     (org-priority-default      . ?C)
-    (org-modern-priority       . '((?A . "")   ;; 重要度高・緊急度高
-                                   (?B . "")   ;; 重要度低・緊急度高
-                                   (?C . "")   ;; 重要度高・緊急度低
-                                   (?D . ""))) ;; 重要度低・緊急度低
+    (org-modern-priority       . '((?A . "")   ;; nf-fa-angles_up
+                                   (?B . "")   ;; nf-fa-angle_up
+                                   (?C . "")   ;; nf-oct-dot
+                                   (?D . "")   ;; nf-fa-angle_down
+                                   (?E . ""))) ;; nf-fa-angles_down
     (org-modern-checkbox       . '((?X . "󰄵") (?- . "󰡖") (?\s . "󰄱"))))
 
   (leaf org-roam :ensure t
