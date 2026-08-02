@@ -1226,45 +1226,18 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (org-roam-directory . roam-dir)
     (org-roam-db-autosync-mode . t)
     (org-roam-completion-everywhere . t)
-    (org-roam-capture-templates . '(("f" "Family" plain
-                                     "* 何が起きたか（事実）\n- %?\n\n* 自分の感情\n- \n\n* 伝えるならどう言う？\n- \n\n* 次にどうしたい？\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :family:draft:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("k" "CP: Insight (典型/気づき)" plain
-                                     "* 言いたいこと（1行）\n- %?\n\n* 使える状況\n- \n\n* 根拠・理由（雑でOK）\n- \n\n* 関連\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :cp:idea:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("K" "CP: Failure (なぜ詰まったか)" plain
-                                     "* 詰まった点\n- %?\n\n* 原因（推測でOK）\n- \n\n* 次回の手がかり（再発防止の観点）\n- \n\n* 関連\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :cp:failure:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("q" "CP/Tech: Question (問いノート)" plain
-                                     "* 問い\n- %?\n\n* なぜ気になる？\n- \n\n* 仮説\n- \n\n* 追跡リンク\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :question:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("t" "Tech: Explain (自分用に説明)" plain
-                                     "* 結論\n- %?\n\n* 前提\n- \n\n* 例\n- \n\n* ハマりどころ\n- \n\n* 関連\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :tech:explain:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("w" "Work: Decision (判断ログ)" plain
-                                     "* 判断\n- %?\n\n* 背景\n- \n\n* 選択肢\n- \n\n* リスク/懸念\n- \n\n* 期待する結果\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :work:decision:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("s" "Structure (索引/まとめ)" plain
-                                     "* このノートがカバーする範囲\n- %?\n\n* 関連ノート\n- \n\n* 目次\n- \n"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :structure:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)
-                                    ("b" "Bibliography" plain "%?"
-                                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :biblio:\n\n")
-                                     :jump-to-captured t
-                                     :unnarrowed t)))
+    (org-roam-capture-templates . '(("f" "Fleet" plain "* %?\n\n"
+                                     :target (file+head
+                                              "%<%Y%m%d%H%M%S>-${slug}.org"
+                                              "#+TITLE: ${title}\n#+DATE: %<%Y-%m-%d>\n#+OPTIONS: ^:{} \\n:t toc:nil\n#+FILETAGS: :draft:"))
+                                    ("s" "Structure" plain "* %?\n\n"
+                                     :target (file+head
+                                              "%<%Y%m%d%H%M%S>-${slug}.org"
+                                              "#+TITLE: ${title}\n#+DATE: %<%Y-%m-%d>\n#+OPTIONS: ^:{} \\n:t toc:nil\n#+FILETAGS: :structure:"))
+                                    ("b" "Bibliography" plain "* %?\n\n"
+                                     :target (file+head
+                                              "%<%Y%m%d%H%M%S>-${slug}.org"
+                                              "#+TITLE: ${title}\n#+DATE: %<%Y-%m-%d>\n#+OPTIONS: ^:{} \\n:t toc:nil\n#+FILETAGS: :biblio:"))))
     :bind
     ("C-c o" . chpn-roam-prefix)
     (chpn-roam-prefix
