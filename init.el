@@ -733,6 +733,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   (xref-show-xrefs-function . #'consult-xref)
   (xref-show-definitions-function . #'consult-xref)
+  (consult-find-args . "find . -not ( -path */.git -prune )")
   :bind
   ;;; Virtual Buffers
   ("C-x b" . consult-buffer)
