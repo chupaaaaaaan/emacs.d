@@ -936,7 +936,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-agenda-remove-tags . t)
   (org-agenda-block-separator . ?·)
   (org-agenda-custom-commands . '(("i" "Agenda"
-                                   ((agenda "" ((org-agenda-span 'day)
+                                   ((tags-todo "+INBOX"
+                                               ((org-agenda-overriding-header "Inbox")
+                                                (org-agenda-todo-ignore-scheduled nil)
+                                                (org-tags-match-list-sublevels nil)))
+
+                                    (agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
                                                 (org-habit-show-habits nil)
                                                 (org-agenda-prefix-format " %i %-12:c%-12t% s [%4e] %.48b")))
@@ -967,11 +972,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
                                                 (org-agenda-sorting-strategy '(category-keep priority-down))))
-
-                                    (tags-todo "+INBOX"
-                                               ((org-agenda-overriding-header "Inbox")
-                                                (org-agenda-todo-ignore-scheduled nil)
-                                                (org-tags-match-list-sublevels nil)))
 
                                     (tags-todo "-INBOX+PROJECT/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Projects")
