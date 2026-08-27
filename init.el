@@ -1048,6 +1048,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-babel-load-languages . '((plantuml . t)
                                 (sql . t)
                                 (awk . t)
+                                (sed . t)
                                 (java . t)
                                 (shell . t)
                                 (haskell . t)))
