@@ -1964,7 +1964,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
           (delete-window win)
         (chpn/vterm))))
 
-  (defconst chpn/vterm-main-buffer-name "*vterm*"
+  (defconst chpn/vterm-main-buffer-name " *vterm*"
     "Single vterm buffer used by chpn/vterm.")
 
   (defun chpn/vterm ()
