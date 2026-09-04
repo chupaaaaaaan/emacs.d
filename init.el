@@ -1844,6 +1844,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf urlenc :ensure t)
 
+(leaf devcontainer :ensure t)
+
 (leaf lsp-terraform
   :custom
   (lsp-terraform-ls-enable-show-reference . t)
