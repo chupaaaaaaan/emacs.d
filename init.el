@@ -1936,7 +1936,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf vterm :ensure t
   :when (display-graphic-p)
-  :defvar (chpn/vterm-slot-height)
+  :defvar (chpn/vterm-slot-height
+           consult-buffer-filter)
   :defun (chpn/vterm--display-in-slot
           chpn/vterm--slot-window)
   :custom
@@ -2030,7 +2031,11 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (defun chpn/golden-ratio-refresh (&rest _)
     "Re-run golden-ratio after window changes settle."
     (when (bound-and-true-p golden-ratio-mode)
-      (run-with-idle-timer 0 nil #'golden-ratio))))
+      (run-with-idle-timer 0 nil #'golden-ratio)))
+
+  :config
+  (with-eval-after-load 'consult
+    (add-to-list 'consult-buffer-filter (concat "\\`" (regexp-quote chpn/vterm-main-buffer-name) "\\'"))))
 
 (leaf web-mode :ensure t
   :mode ("\.html$")
