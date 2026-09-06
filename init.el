@@ -961,28 +961,31 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                                  '(or (chpn/org-agenda-skip-if-noprop "STYLE" "habit")
                                                       (chpn/org-agenda-skip-if-notags '("FINISH") t)))))
 
-                                    (tags (format "CLOSED>=\"<%s>\"|LAST_REPEAT>=\"<%s>\"|TODO=\"DOING\""
-                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)
-                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)) ;; 翌日午前`chpn/today-cutoff-hour'時までは当日とみなす
-                                          ((org-agenda-overriding-header "Doing and Today's Done (including habits)")
-                                           (org-agenda-prefix-format " %i %-12:c %-48.48b")))
-
-                                    (tags-todo "-INBOX-START-FINISH-PROJECT-BOOK/-DOING-DONE-CANCELED"
+                                    (tags-todo "-INBOX-START-FINISH-PROJECT-BOOK/-DONE-CANCELED"
                                                ((org-agenda-overriding-header "Tasks")
                                                 (org-agenda-prefix-format " %i %-12:c %-48.48b")
                                                 (org-agenda-todo-ignore-scheduled 'all)
                                                 (org-agenda-sorting-strategy '(category-keep priority-down))))
 
-                                    (tags-todo "-INBOX+PROJECT/-DONE-CANCELED"
-                                               ((org-agenda-overriding-header "Projects")
-                                                (org-agenda-prefix-format " %i %-12:c %-48.48b")
-                                                (org-agenda-sorting-strategy '(category-keep))))
+                                    (tags (format "CLOSED>=\"<%s>\"|LAST_REPEAT>=\"<%s>\""
+                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)
+                                                  (chpn/org-agenda-today-timestamp-until chpn/today-cutoff-hour)) ;; 翌日午前`chpn/today-cutoff-hour'時までは当日とみなす
+                                          ((org-agenda-overriding-header "Today's Done")
+                                           (org-agenda-skip-function '(chpn/org-agenda-skip-if-prop "STYLE" "habit"))
+                                           (org-agenda-prefix-format " %i %-12:c %-48.48b")))
 
-                                    (tags-todo "-INBOX+BOOK/-DONE-CANCELED"
-                                               ((org-agenda-overriding-header "Books")
-                                                (org-agenda-prefix-format " %i %-12:c")
-                                                (org-agenda-todo-ignore-scheduled 'all)
-                                                (org-agenda-sorting-strategy '(category-keep))))) nil)))
+                                    ;; (tags-todo "-INBOX+PROJECT/-DONE-CANCELED"
+                                    ;;            ((org-agenda-overriding-header "Projects")
+                                    ;;             (org-agenda-prefix-format " %i %-12:c %-48.48b")
+                                    ;;             (org-agenda-sorting-strategy '(category-keep))))
+
+                                    ;; (tags-todo "-INBOX+BOOK/-DONE-CANCELED"
+                                    ;;            ((org-agenda-overriding-header "Books")
+                                    ;;             (org-agenda-prefix-format " %i %-12:c")
+                                    ;;             (org-agenda-todo-ignore-scheduled 'all)
+                                    ;;             (org-agenda-sorting-strategy '(category-keep))))
+
+                                    ) nil)))
 
   ;; refile
   (org-refile-use-outline-path . 'file)
@@ -1139,6 +1142,11 @@ OFFSET は 0‒23 の整数を想定する。"
            (base-time    (if (< current-hour offset) (time-subtract now (days-to-time 1)) now))
            (fmt          (format "%%Y-%%m-%%d %02d:00" offset)))
       (format-time-string fmt base-time)))
+  (defun chpn/org-agenda-skip-if-prop (key value)
+    "値がVALUEであるKEYプロパティを持つエントリの収集をスキップする。"
+    (org-back-to-heading t)
+    (let* ((end (org-entry-end-position)))
+      (when (string= (org-entry-get (point) key) value) end)))
   (defun chpn/org-agenda-skip-if-noprop (key value)
     "値がVALUEであるKEYプロパティを持たないエントリの収集をスキップする。"
     (org-back-to-heading t)
