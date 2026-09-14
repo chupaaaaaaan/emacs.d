@@ -1601,9 +1601,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     :config
     (treemacs-icons-dired-mode))
   (leaf treemacs-magit :ensure t :require t)
-  (leaf treemacs-nerd-icons :ensure t
-    :config
-    (treemacs-load-theme "nerd-icons")))
+  (leaf treemacs-all-the-icons
+    :ensure t all-the-icons))
 
 (leaf flycheck :ensure t
   :blackout t
