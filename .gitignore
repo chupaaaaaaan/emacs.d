@@ -13,6 +13,7 @@ customize.el
 history
 places
 projectile-bookmarks.eld
+projectile-frecency.eld
 recentf
 tramp
 transient/
@@ -27,3 +28,4 @@ elpa/
 .org-id-locations
 org-roam.db
 templates/journal/template.org
+.extension/
