@@ -1945,10 +1945,11 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf vterm :ensure t
   :when (display-graphic-p)
-  :defvar (chpn/vterm-slot-height
+  :defvar (chpn/vterm-slot-height-ratio
            consult-buffer-filter)
   :defun (chpn/vterm--display-in-slot
-          chpn/vterm--slot-window)
+          chpn/vterm--slot-window
+          chpn/vterm--slot-height)
   :custom
   (vterm-keymap-exceptions . '("C-c" "C-x" "C-u" "C-g" "M-x" "M-o" "C-y" "M-y"
                                "M-1" "M-2" "M-:" "M-i" "M-t" "<f1>" "<f5>" "<f6>" "<f7>" "<f8>"))
@@ -1980,19 +1981,28 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (defun chpn/vterm ()
     "Show the single vterm buffer in the side window (create if needed)."
     (interactive)
-    (let* ((slot (chpn/vterm--slot-window))
-           (buf  (get-buffer chpn/vterm-main-buffer-name)))
-      (select-window slot)
-      (if (buffer-live-p buf)
-          (chpn/vterm--display-in-slot buf t)
-        (let ((vterm-buffer-name chpn/vterm-main-buffer-name))
-          (vterm)
-          (chpn/vterm--display-in-slot (current-buffer) t)))))
+    (let ((buf
+           (or (get-buffer chpn/vterm-main-buffer-name)
+               (save-window-excursion
+                 (let ((vterm-buffer-name chpn/vterm-main-buffer-name))
+                   (vterm)
+                   (current-buffer))))))
+      (chpn/vterm--display-in-slot buf t)))
 
-  (defcustom chpn/vterm-slot-height 24
-    "Height (rows) of the vterm slot on the bottom."
-    :group 'vterm-toggle
-    :type 'integer)
+  ;; (defcustom chpn/vterm-slot-height 24
+  ;;   "Height (rows) of the vterm slot on the bottom."
+  ;;   :group 'vterm-toggle
+  ;;   :type 'integer)
+
+  (defcustom chpn/vterm-slot-height-ratio 0.3
+    "Ratio of the frame height used by the vterm slot."
+    :group 'vterm
+    :type 'float)
+
+  (defun chpn/vterm--slot-height ()
+    "Return the desired height of the vterm slot in rows."
+    (round (* (window-total-height (frame-root-window))
+              chpn/vterm-slot-height-ratio)))
 
   (defun chpn/vterm--slot-window ()
     "Get or create the dedicated slot window for vterm."
@@ -2003,7 +2013,10 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
                (get-buffer-create " *my-vterm-slot-placeholder*")
                `((side . bottom)
                  (slot . 0)
-                 (window-height . ,chpn/vterm-slot-height)))))
+                 (window-height . ,(chpn/vterm--slot-height))))))
+       (set-window-parameter w 'chpn/vterm-slot t)
+       (set-window-parameter w 'no-delete-other-windows t)
+       (set-window-parameter w 'no-other-window t)
        (set-window-dedicated-p w t)
        w)))
 
@@ -2013,23 +2026,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
       (set-window-dedicated-p slot nil)
 
       (set-window-buffer slot buf)
-      (set-window-parameter slot 'chpn/vterm-slot t)
-      (set-window-parameter slot 'no-delete-other-windows t)
-      (set-window-parameter slot 'no-other-window t)
-
-      ;; 他所に表示されていたら削除
-      (dolist (w (get-buffer-window-list buf nil t))
-        (unless (eq w slot)
-          (delete-window w)))
 
       ;; 幅補正
-      (while (< (window-body-height slot) chpn/vterm-slot-height)
-        (window-resize slot 1))
-      (while (> (window-body-height slot) chpn/vterm-slot-height)
-        (window-resize slot -1))
-      (when (fboundp 'vterm--refresh-size)
-        (with-current-buffer buf
-          (vterm--refresh-size)))
+      (let ((delta (- (chpn/vterm--slot-height)
+                      (window-body-height slot))))
+        (unless (zerop delta)
+          (window-resize slot delta)))
 
       ;; 再度dedicatedに戻す
       (set-window-dedicated-p slot t)
