@@ -185,9 +185,6 @@
 (global-unset-key (kbd "C-x C-c"))
 (defalias 'exit 'save-buffers-kill-emacs)
 
-(global-unset-key (kbd "<henkan>"))
-(global-unset-key (kbd "<muhenkan>"))
-
 ;; Settings that do not depend on some major modes or minor modes
 (global-set-key (kbd "C-h")   'delete-backward-char)
 (global-set-key [f7] (lambda () (interactive) (chpn/open-file (concat user-emacs-directory "init.el"))))
@@ -411,24 +408,6 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :custom
   ;; (default-input-method . "japanese-mozc")
   (current-language-environment . "Japanese"))
-
-;; input method
-(leaf mozc :ensure t
-  :disabled
-  :if (eq system-type 'gnu/linux)
-  :bind*
-  ("<henkan>" . (lambda () (interactive) (unless current-input-method (toggle-input-method))))
-  ("<muhenkan>" . (lambda () (interactive) (when current-input-method (toggle-input-method))))
-  :config
-  (leaf mozc-posframe
-    :vc (;; original repository: derui/mozc-posframe
-         ;; 最新版ではうまく動かない（原因は調べていない）ため、forkしたうえで動作するリビジョンを取得
-         ;; なお`:branch'プロパティにはブランチ名・タグ名のみ指定可能 (内部的に `git clone --branch' を実行しているため)
-         :url "https://github.com/chupaaaaaaan/mozc-posframe.git"
-         :branch "version-my-using")
-    :require t
-    :custom
-    (mozc-candidate-style . 'posframe)))
 
 (leaf fcitx :ensure t
   :defvar (fcitx-remote-command)
