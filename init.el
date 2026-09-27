@@ -185,6 +185,9 @@
 (global-unset-key (kbd "C-x C-c"))
 (defalias 'exit 'save-buffers-kill-emacs)
 
+(global-unset-key (kbd "<henkan>"))
+(global-unset-key (kbd "<muhenkan>"))
+
 ;; Settings that do not depend on some major modes or minor modes
 (global-set-key (kbd "C-h")   'delete-backward-char)
 (global-set-key [f7] (lambda () (interactive) (chpn/open-file (concat user-emacs-directory "init.el"))))
