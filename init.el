@@ -1511,7 +1511,12 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf jsonrpc :ensure t)
 
-(leaf emacs-codex-ide
+(leaf claude-code-ide
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :config
+  (claude-code-ide-emacs-tools-setup))
+
+(leaf codex-ide
   :vc (:url "https://github.com/dgillis/emacs-codex-ide" :rev :newest))
 
 ;; projectile
