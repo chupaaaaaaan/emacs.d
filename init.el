@@ -1532,37 +1532,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf jsonrpc :ensure t)
 
-(leaf copilot :ensure t
-  :disabled t
-  :defvar (copilot-mode)
-  :hook (prog-mode-hook
-         text-mode-hook
-         emacs-lisp-mode-hook)
-  :bind
-  (copilot-completion-map
-   ("<tab>"     . copilot-accept-completion) ;; Tab
-   ("C-<tab>"   . copilot-accept-completion-by-line) ;; Ctrl-Tab
-   ("<backtab>" . copilot-accept-completion-by-word) ;; Shift-Tab
-   ("M-n"       . copilot-next-completion)
-   ("M-p"       . copilot-previous-completion))
-  (chpn-toggle-prefix
-   :package init
-   ("c" . toggle-copilot-mode))
-  :custom
-  (copilot-indent-offset-warning-disable . t)
-  :init
-  (defun toggle-copilot-mode ()
-    "Toggle GitHub Copilot mode."
-    (interactive)
-    (copilot-mode (if copilot-mode -1 1))
-    (message "Copilot mode %s" (if copilot-mode "enabled" "disabled"))))
-
-(leaf copilot-chat :ensure t
-  :disabled t
-  :hook
-  (git-commit-setup-hook . copilot-chat-insert-commit-message)
-  :custom
-  (copilot-chat-frontend . 'org))
+(leaf emacs-codex-ide
+  :vc (:url "https://github.com/dgillis/emacs-codex-ide" :rev :newest))
 
 ;; projectile
 (leaf projectile :ensure t
