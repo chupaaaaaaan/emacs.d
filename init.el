@@ -1513,11 +1513,19 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf claude-code-ide
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :bind
+  (chpn-function-prefix
+   :package init
+   ("c" . claude-code-ide-menu))
   :config
   (claude-code-ide-emacs-tools-setup))
 
 (leaf codex-ide
-  :vc (:url "https://github.com/dgillis/emacs-codex-ide" :rev :newest))
+  :vc (:url "https://github.com/dgillis/emacs-codex-ide" :rev :newest)
+  :bind
+  (chpn-function-prefix
+   :package init
+   ("x" . codex-ide-menu)))
 
 ;; projectile
 (leaf projectile :ensure t
