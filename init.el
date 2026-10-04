@@ -1522,6 +1522,8 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
 
 (leaf codex-ide
   :vc (:url "https://github.com/dgillis/emacs-codex-ide" :rev :newest)
+  :custom
+  (codex-ide-cli-extra-flags . "-c 'mcp_servers.codex-ide-emacs-mcp.env_vars=[\"XDG_RUNTIME_DIR\"]'")
   :bind
   (chpn-function-prefix
    :package init
