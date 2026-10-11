@@ -879,9 +879,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
           org-get-tags
           org-get-todo-state
           org-read-date
+          org-save-all-org-buffers
           org-todo
+          org-up-heading-safe
           org-update-statistics-cookies
           chpn/org-agenda-today-timestamp-until
+          chpn/org-update-all-buffer-statistics
           ladicle/task-clocked-time)
   :custom
   ;; files and directories
@@ -1077,9 +1080,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-mode-hook . (lambda ()
                      (dolist (key '("C-'" "C-," "C-."))
                        (unbind-key key org-mode-map))))
-  (auto-save-hook . org-save-all-org-buffers)
-  (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies "ALL")))
+  (auto-save-hook . (lambda ()
+                      (chpn/org-update-all-buffer-statistics)
+                      (org-save-all-org-buffers)))
+  (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies t)))
   (org-after-todo-statistics-hook . chpn/org-summary-todo)
+  (org-after-refile-insert-hook . chpn/org-update-parent-statistics)
   (org-after-tags-change-hook . chpn/org-cookie-data-by-project)
 
   :advice
@@ -1154,6 +1160,19 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     "すべてのサブツリーが終了したらDONEに切り替える。その他の場合はTODOにする。"
     (let (org-log-done org-log-states)
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+  (defun chpn/org-update-parent-statistics ()
+    "親見出しの統計クッキーを更新する。"
+    (save-excursion
+      (when (org-up-heading-safe)
+        (org-update-statistics-cookies nil))))
+  (defun chpn/org-update-all-buffer-statistics ()
+    "開いているすべてのOrgバッファの統計クッキーを更新する。"
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (derived-mode-p 'org-mode)
+          (save-restriction
+            (widen)
+            (org-update-statistics-cookies t))))))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
            (dn (concat org-directory "memo/" (format-time-string "%F_" (current-time)) title))
