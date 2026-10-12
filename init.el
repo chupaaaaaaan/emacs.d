@@ -1621,6 +1621,7 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (lsp-mode-hook . lsp-enable-which-key-integration)
   (lsp-mode-hook . lsp-ui-mode)
   (elm-mode-hook           . lsp-deferred)
+  (go-ts-mode-hook         . lsp-deferred)
   (haskell-mode-hook       . lsp-deferred)
   (js-mode-hook            . lsp-deferred)
   (typescript-ts-mode-hook . lsp-deferred)
@@ -1877,10 +1878,15 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
   (treesit-font-lock-level . 4)
   :config
   (leaf treesit-auto :ensure t
+    :require t
+    :defun (treesit-auto-add-to-auto-mode-alist
+            global-treesit-auto-mode)
     :custom
     (treesit-auto-install . 'prompt)
-    (treesit-auto-langs . '(python tsx typescript json))
-    (global-treesit-auto-mode . t)))
+    (treesit-auto-langs . '(python tsx typescript json go gomod))
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode 1)))
 
 (leaf elm-mode :ensure t
   :custom
