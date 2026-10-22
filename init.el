@@ -991,7 +991,12 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   (org-timer-default-timer . 30)
 
   ;; todo
-  (org-todo-keywords . '((sequence "TODO(t)" "DOING(p)" "WAIT(w@)" "|" "DONE(d)" "CANCELED(c@)")))
+  ;; TODO: 未着手
+  ;; PROG: 作業中 (In Progress)
+  ;; WAIT: 待機中 (返答待ち・依存タスク待ちなど)
+  ;; DONE: 完了
+  ;; CANCELED: キャンセル
+  (org-todo-keywords . '((sequence "TODO(t)" "PROG(p)" "WAIT(w@)" "|" "DONE(d)" "CANCELED(c@)")))
   (org-enforce-todo-dependencies . t)
   (org-enforce-todo-checkbox-dependencies . t)
   (org-track-ordered-property-with-tag . t)
@@ -1071,7 +1076,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
   :hook
   (kill-emacs-hook . ladicle/org-clock-out-and-save-when-exit)
   (org-clock-in-hook . (lambda ()
-                         (when (org-clocking-p) (org-todo "DOING"))
+                         (when (org-clocking-p) (org-todo "PROG"))
                          (setq org-mode-line-string (ladicle/task-clocked-time))
                          (run-at-time 0 60 (lambda ()
                                              (setq org-mode-line-string (ladicle/task-clocked-time))
