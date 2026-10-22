@@ -929,7 +929,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                                     (agenda "" ((org-agenda-span 'day)
                                                 (org-agenda-overriding-header "Main Agenda: Daily Tasks and Schedules")
                                                 (org-habit-show-habits nil)
-                                                (org-agenda-prefix-format " %i %-12:c%-12t% s [%4e] %.48b")))
+                                                (org-agenda-prefix-format " %i %-12:c%-12t% s [%4e] %-24b")))
 
                                     (agenda "" ((org-agenda-overriding-header "Habits")
                                                 (org-agenda-skip-function
