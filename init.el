@@ -1086,7 +1086,7 @@ https://github.com/ema2159/centaur-tabs#my-personal-configuration"
                      (dolist (key '("C-'" "C-," "C-."))
                        (unbind-key key org-mode-map))))
   (auto-save-hook . (lambda ()
-                      (chpn/org-update-all-buffer-statistics)
+                      ;; (chpn/org-update-all-buffer-statistics)
                       (org-save-all-org-buffers)))
   (org-capture-before-finalize-hook . (lambda () (org-update-statistics-cookies t)))
   (org-after-todo-statistics-hook . chpn/org-summary-todo)
@@ -1170,14 +1170,14 @@ LOCAL の意味は`chpn/org-agenda-skip-if-tags'と同じである。
     (save-excursion
       (when (org-up-heading-safe)
         (org-update-statistics-cookies nil))))
-  (defun chpn/org-update-all-buffer-statistics ()
-    "開いているすべてのOrgバッファの統計クッキーを更新する。"
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (when (derived-mode-p 'org-mode)
-          (save-restriction
-            (widen)
-            (org-update-statistics-cookies t))))))
+  ;; (defun chpn/org-update-all-buffer-statistics ()
+  ;;   "開いているすべてのOrgバッファの統計クッキーを更新する。"
+  ;;   (dolist (buf (buffer-list))
+  ;;     (with-current-buffer buf
+  ;;       (when (derived-mode-p 'org-mode)
+  ;;         (save-restriction
+  ;;           (widen)
+  ;;           (org-update-statistics-cookies t))))))
   (defun chpn/today-memo-string-with-mkdir ()
     (let* ((title (read-string "memo title: "))
            (dn (concat org-directory "memo/" (format-time-string "%F_" (current-time)) title))
